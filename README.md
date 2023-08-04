@@ -50,8 +50,8 @@ git clone --branch frontend/main --single-branch https://github.com/umbraco/Umbr
 
 For details on setting up each part, view the README's in the respective part branches
 
-* [Getting Started - Backend] (https://github.com/umbraco/Umbraco.Headless.Demo/tree/backend/main/README.md)
-* [Getting Started - Frontend] (https://github.com/umbraco/Umbraco.Headless.Demo/tree/backend/main/README.md)
+* [Getting Started - Backend](https://github.com/umbraco/Umbraco.Headless.Demo/tree/backend/main/README.md)
+* [Getting Started - Frontend](https://github.com/umbraco/Umbraco.Headless.Demo/tree/backend/main/README.md)
 
 ## Comments
 
