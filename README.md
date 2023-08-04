@@ -10,6 +10,16 @@ All of the product pages and content pages are accessed through the Umbraco Cont
 
 The tags filter and price sorting are both custom extensions to the Umbraco Content Delivery API and show how you can extend the out of the box functionality for your own needs.
 
+The following is a list of all the Umbraco Content Delivery API features made use of in this demo:
+
+* Fetching content by path
+* Fetching child content by path
+* Filtering content
+* Sorting content
+* Customer filters
+* Customer sort criteria
+* Expanding properties
+
 ## Umbraco Commerce Storefront API
 
 The cart management and checkout flow are all provided via the Umrbaco Commer Storefront API.
