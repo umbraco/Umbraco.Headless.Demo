@@ -2,7 +2,7 @@
 
 The Umbraco Headless Demo is an example solution showcasing the capabilities and features of Umbraco's various headless offerings, all combined into one real-world example. The demo takes the form of a swag store with products and a full checkout flow, as well as suplimentary content pages. 
 
-![Homepage](assets/products.png)
+![Screenshots](assets/animation.gif)
 
 ## Umbraco Content Delivery API
 
