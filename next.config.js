@@ -1,4 +1,7 @@
 /** @type {import('next').NextConfig} */
+
+const umbracoBaseUrl = new URL(process.env.UMBRACO_BASE_URL);
+
 module.exports = {
   eslint: {
     // Disabling on production builds because we're running checks on PRs via GitHub Actions.
@@ -11,15 +14,9 @@ module.exports = {
     formats: ['image/avif', 'image/webp'],
     remotePatterns: [
       {
-        protocol: 'https',
-        hostname: 'localhost',
-        port: '44381',
-        pathname: '/media/**'
-      },
-      {
-        protocol: 'https',
-        hostname: 'umbraco-headless-demo.azurewebsites.net',
-        port: '',
+        protocol: umbracoBaseUrl.protocol.replace(':', ''),
+        hostname: umbracoBaseUrl.hostname,
+        port: umbracoBaseUrl.port,
         pathname: '/media/**'
       }
     ]
