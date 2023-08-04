@@ -22,7 +22,17 @@ The following is a list of all the Umbraco Content Delivery API features made us
 
 ## Umbraco Commerce Storefront API
 
-The cart management and checkout flow are all provided via the Umrbaco Commer Storefront API.
+The cart management and checkout flow are all provided via the Umrbaco Commerce Storefront API. We showcase all the core features you would expect from a commerce API such as creating and managing an active cart, as well as capturing customer details through a checkout flow, and also managing the payment processing. We also showcase how the Umbraco Commerce property editors work seamlessly with the Umbraco Content Delivery API for easy product data retrieval.
+
+The following is a list of all the Umbraco Commerce Storefront API features made use of in this demo:
+
+* Creating a cart
+* Managing a cart (remove items and modify quantity)
+* Updating checkout details (billing, shipping, payment methods and shipping methods)
+* Payment processing (inline, redirect and framed)
+* Fetching store entities
+* Expanding properties
+* Content Delivery API friendly property editors
 
 ## Umbraco Forms API
 
