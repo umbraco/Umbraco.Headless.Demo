@@ -57,7 +57,7 @@ For details on getting started with each part, view the README's in the respecti
 
 If the demo site looks familiar that's because we have based it on the official Umbraco swag store. This ensures that we are using a real world example and know exactly what features should be implemented and how. 
 
-Unfortunately the official swag store will be closing down shortly due mainly to our environmental commitments but we thought it would be nice to let the stunning design live on as part of this demo. A big thank you goes to [Perplex](https://perplex.nl/) for creating such a wonderful store design and agreeding to allow us to continue using it within this demo solution 🙌 
+Unfortunately the official swag store will be closing down shortly due mainly to our environmental commitments but we thought it would be nice to let the stunning design live on as part of this demo. A big thank you goes to [Perplex](https://perplex.nl/) for creating such a wonderful store design and agreeing to allow us to continue using it within this demo 🙌 
 
 ## License
 
