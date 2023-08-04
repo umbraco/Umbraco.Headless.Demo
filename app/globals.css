@@ -1,0 +1,38 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.btn {
+  @apply rounded text-center font-bold transition-colors;
+}
+
+.btn-sm {
+  @apply py-2 text-sm;
+}
+
+.btn-md {
+  @apply py-3 text-base;
+}
+
+.btn-lg {
+  @apply py-4 text-xl;
+}
+
+.btn-outline {
+  @apply border-2 bg-transparent;
+}
+
+.checkout-steps-counter {
+  counter-reset: checkout-step;
+}
+
+.checkout-step-count:before {
+  counter-increment: checkout-step;
+  content: counter(checkout-step) !important;
+}
+
+@supports (font: -apple-system-body) and (-webkit-appearance: none) {
+  img[loading='lazy'] {
+    clip-path: inset(0.6px);
+  }
+}
