@@ -43,3 +43,9 @@ TBC
 ## Comments
 
 If the demo site looks familiar that's because we have based it on the official Umbraco swag store. This ensures that we are using a real world example and know exactly what features should be implemented and how. Unfortunately the official swag store will be closing down shortly due mainly to our environmental commitments but we thought it would be nice to let the stunning design live on as part of this demo. A big thank you goes to [Perplex](https://perplex.nl/) for creating such a wonderful store design and agreeding to allow us to continue using it within this demo solution 🙌 
+
+## License
+
+Source code copyright © 2023 Umbraco A/S. Site design © 2023 Perplex Digital B.V.
+
+This demo source code is licensed under MIT. The core Umbraco products are licensed under Umbracos commercial license.
