@@ -32,7 +32,7 @@ Your app should now be running on [localhost:3000](http://localhost:3000/).
 
 ## Deploying
 
-This project is designed to be deployed to [Vercel](https://vercel.com). Checkout the [Deploying to Vercel docs](https://vercel.com/docs/concepts/deployments/overview) for full details.
+This project is designed to be deployed to [Vercel](https://vercel.com). Checkout the [Deploying to Vercel docs](https://vercel.com/docs/concepts/deployments/overview) for full details on how to do this.
 
 ## Known Issues
 
