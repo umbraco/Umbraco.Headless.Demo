@@ -1,4 +1,4 @@
-# Umbraco Headless Demo
+# Umbraco Headless Demo 🦄
 
 The Umbraco Headless Demo is an example solution showcasing the capabilities and features of Umbraco's various headless offerings, all combined into one real-world example. The demo takes the form of a swag store with products and a full checkout flow, as well as suplimentary content pages. 
 
@@ -39,6 +39,19 @@ The following is a list of all the Umbraco Commerce Storefront API features made
 TBC
 
 ## Getting Started
+
+This demo is split into two parts, the Umbraco backend and a Next.js frontend. You can access the two parts within their relevant git branches. Given these are two distinct sub projects, it's best to checkout out each branch into a different folder independantly rather than checking out this main branch and switching branches.
+
+```bash
+git clone --branch backend/main --single-branch https://github.com/umbraco/Umbraco.Headless.Demo.git backend
+git clone --branch frontend/main --single-branch https://github.com/umbraco/Umbraco.Headless.Demo.git frontend
+
+```
+
+For details on setting up each part, view the README's in the respective part branches
+
+* [Getting Started - Backend] (https://github.com/umbraco/Umbraco.Headless.Demo/tree/backend/main/README.md)
+* [Getting Started - Frontend] (https://github.com/umbraco/Umbraco.Headless.Demo/tree/backend/main/README.md)
 
 ## Comments
 
