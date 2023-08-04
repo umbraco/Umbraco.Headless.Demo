@@ -1,31 +1,19 @@
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fvercel%2Fcommerce&project-name=commerce&repo-name=commerce&demo-title=Next.js%20Commerce&demo-url=https%3A%2F%2Fdemo.vercel.store&demo-image=https%3A%2F%2Fbigcommerce-demo-asset-ksvtgfvnd.vercel.app%2Fbigcommerce.png&env=SHOPIFY_REVALIDATION_SECRET,SHOPIFY_STOREFRONT_ACCESS_TOKEN,SHOPIFY_STORE_DOMAIN,SITE_NAME,TWITTER_CREATOR,TWITTER_SITE)
+# Umbraco Headless Demo - Frontend
 
-# Umbraco Headless Demo Store
-
-The Umbraco Headless Demo Store is a Next.js 13 and App Router-ready ecommerce demo, built to showcase real world example usage of all of Umbraco's headless capabilities, featuring:
+This branch represents the frontend of the Umbraco Headless Demo and consists of a Next.js application fully configured with common features, including:
 
 - Next.js App Router
 - Optimized for SEO using Next.js's Metadata
 - React Server Components (RSCs) and Suspense
 - Server Actions for mutations
 - Edge Runtime
-- New fetching and caching paradigms
+- Latest fetching and caching paradigms
 - Dynamic OG images
 - Styling with Tailwind CSS
-- Checkout and payments via Umbraco Commerce Storefront API
-- Product data via Umbraco Delivery API
 
-## Getting started
+## Configuration
 
-This demo store is in two parts, the Umbraco back end and this, the Next.js front end. You will need both parts in order to be run this demo.
-
-## Setting up Umbraco
-
-View the README in the Umbraco back end project for details on setting up Umbraco.
-
-## Setting up Next.js
-
-You will need to use the environment variables [defined in `.env.example`](.env.example) to run this project. It's recommended you use [Vercel Environment Variables](https://vercel.com/docs/concepts/projects/environment-variables) for this, but a `.env` file is all that is necessary.
+You will need to use the environment variables [defined in `.env.example`](.env.example) to configure this project. It's recommended you use [Vercel Environment Variables](https://vercel.com/docs/concepts/projects/environment-variables) for this, but a `.env` file is all that is necessary.
 
 > Note: You should not commit your `.env` file or it will expose secrets that will allow others to control your store.
 
@@ -33,11 +21,27 @@ You will need to use the environment variables [defined in `.env.example`](.env.
 2. Link local instance with Vercel and GitHub accounts (creates `.vercel` directory): `vercel link`
 3. Download your environment variables: `vercel env pull`
 
-## Running Next.js locally
+## Running locally
 
 ```bash
 npm install
-npm dev
+npm run dev
 ```
 
 Your app should now be running on [localhost:3000](http://localhost:3000/).
+
+## Deploying
+
+This project is designed to be deployed to [Vercel](https://vercel.com). Checkout the [Deploying to Vercel docs](https://vercel.com/docs/concepts/deployments/overview) for full details.
+
+## Known Issues
+
+* `Error: invariant expected app router to be mounted` or `Method expects to have requestAsyncStorage, none available`  
+  If you are running this project locally on Windows and experience either of these two errors, you'll want to run the `npm` run commands thought WSL. There appear to be some issues running on Windows but running through the Linux subsystem works fine.
+
+
+## License
+
+Copyright © 2023 Umbraco A/S
+
+This demo store is [licensed under MIT](LICENSE.md). The core Umbraco products are licensed under Umbraco's commercial license.
