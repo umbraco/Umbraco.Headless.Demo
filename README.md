@@ -1,6 +1,6 @@
 # Umbraco Headless Demo - Frontend
 
-This branch represents the frontend of the [Umbraco Headless Demo](https://github.com/umbraco/Umbraco.Headless.Demo) and consists of a Next.js application fully configured with common features, including:
+This branch represents the frontend of the [Umbraco Headless Demo](https://github.com/umbraco/Umbraco.Headless.Demo) and consists of a [Next.js](https://nextjs.org/) application fully configured with common features, including:
 
 - Next.js App Router
 - Optimized for SEO using Next.js's Metadata
