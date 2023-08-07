@@ -27,8 +27,8 @@ variables:
   projectsRoot: 'src/'
   adminWebProjectName: 'Umbraco.Headless.Demo.Web'
   buildConfiguration: 'Release'
-  boundedContext: 'umbracoheadlessdemo'
-  serviceName: 'admin'
+  boundedContext: 'umbracodemos'
+  serviceName: 'umbracoheadlessdemo'
   terraformVersion: 1.1.7
   serviceVariableGroupFormat: '{0}-global-{1}' # '{boundedContext}-global-{environment}'
   serviceConnectionNameFormat: 'Infra-{0}-global-{1}' # 'Infra-{environment}-global-{boundedContext}'
