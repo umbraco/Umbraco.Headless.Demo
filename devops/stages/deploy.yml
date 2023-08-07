@@ -1,0 +1,65 @@
+parameters:
+  - name: adminWebProjectName
+    type: string
+  - name: environment
+    type: string
+  - name: environmentName
+    type: string
+  - name: nextEnvironment
+    type: string
+    default: ''
+  - name: boundedContext
+    type: string
+  - name: serviceName
+    type: string
+  - name: terraformVersion
+    type: string
+  - name: serviceVariableGroup
+    type: string
+  - name: nextServiceVariableGroup
+    type: string
+    default: ''
+  - name: serviceConnectionName
+    type: string
+  - name: nextServiceConnectionName
+    type: string
+    default: ''
+
+stages:
+  - stage: deploy-${{parameters.environment}}
+    displayName: "Deploy Infrastructure and Artifacts - ${{parameters.environmentName}}"
+    variables:
+      - group: ${{parameters.serviceVariableGroup}}
+
+    jobs:
+      # Provision infrastructure
+      - template: ../jobs/provision-infrastructure.yml
+        parameters:
+          environment: ${{ parameters.environment }}
+          environment_name: ${{ parameters.environmentName }}
+          bounded_context: ${{ parameters.boundedContext }}
+          working_directory: "$(Build.Repository.LocalPath)/infrastructure/${{ lower(parameters.serviceName) }}"
+          tf_version: ${{ parameters.terraformVersion }}
+          service_variable_group: ${{ parameters.serviceVariableGroup }}
+          service_connection_name: ${{ parameters.serviceConnectionName }}
+
+      # If there's a next environment - plan and display the infrastructure changes for it
+      - ${{ if ne(parameters.nextEnvironment, '') }}:
+          - template: ../jobs/plan-infrastructure.yml
+            parameters:
+              environment: ${{ parameters.nextEnvironment }}
+              bounded_context: ${{ parameters.boundedContext }}
+              working_directory: "$(Build.Repository.LocalPath)/infrastructure/${{ lower(parameters.ServiceName) }}"
+              tf_version: ${{ parameters.terraformVersion }}
+              service_variable_group: ${{ parameters.nextServiceVariableGroup }}
+              service_connection_name: ${{ parameters.nextServiceConnectionName }}
+
+      # Deploy the applications from the built artifacts
+      - template: ../jobs/deploy-application.yml
+        parameters:
+          admin_web_project_name: ${{ parameters.adminWebProjectName }}
+          environment: ${{ parameters.environment }}
+          environment_name: ${{ parameters.environmentName }}
+          bounded_context: ${{ parameters.boundedContext }}
+          service_name: ${{ parameters.serviceName }}
+          service_connection_name: ${{ parameters.serviceConnectionName }}

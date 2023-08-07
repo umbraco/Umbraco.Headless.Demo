@@ -1,0 +1,109 @@
+parameters:
+  environment: # dev/live
+  environment_name:
+  working_directory:
+  tf_version:
+  service_variable_group:
+  service_connection_name:
+
+jobs:
+  - deployment: provisioning-infrastructure
+    displayName: Provision infrastructure - ${{ parameters.environment }}
+    environment: ${{ parameters.environment_name }}
+    continueOnError: false
+    variables:
+      - group: ${{ parameters.service_variable_group }}
+      - name: environment
+        value: ${{ parameters.environment }}
+
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+            - checkout: self
+
+            - task: TerraformInstaller@0
+              displayName: "Use Terraform ${{ parameters.tf_version }}"
+              inputs:
+                terraformVersion: ${{ parameters.tf_version }}
+
+            - task: AzureCLI@2
+              name: ExportAzureServiceConnectionCredentials
+              displayName: "Export Service Connection Credentials"
+              inputs:
+                azureSubscription: ${{ parameters.service_connection_name }}
+                scriptType: pscore
+                scriptLocation: inlineScript
+                addSpnToEnvironment: true
+                inlineScript: |
+                  $SUBSCRIPTION_ID = az account show --query 'id' --output tsv
+                  Write-Host "##vso[task.setvariable variable=tenant_id]$env:tenantId"
+                  Write-Host "##vso[task.setvariable variable=subscription_id]$SUBSCRIPTION_ID"
+                  Write-Host "##vso[task.setvariable variable=client_id]$env:servicePrincipalId"
+                  Write-Host "##vso[task.setvariable variable=client_secret]$env:servicePrincipalKey"
+
+            - pwsh: |
+                terraform version
+              displayName: Display terraform version
+              failOnStderr: true
+
+            - task: qetza.replacetokens.replacetokens-task.replacetokens@3
+              displayName: "Replace tokens in backend/backend.tfvars with variables from the CI/CD environment vars"
+              inputs:
+                targetFiles: "${{ parameters.working_directory }}/backend/backend.tfvars => backend.env.tfvars"
+                encoding: "auto"
+                writeBOM: true
+                actionOnMissing: "fail"
+                keepToken: false
+                tokenPrefix: "#{"
+                tokenSuffix: "}#"
+
+            - task: qetza.replacetokens.replacetokens-task.replacetokens@3
+              displayName: "Replace tokens in ${{ parameters.environment }}/variables.tfvars with variables from the CI/CD environment vars"
+              inputs:
+                targetFiles: "${{ parameters.working_directory }}/${{ parameters.environment }}/variables.tfvars => variables.env.tfvars"
+                encoding: "auto"
+                writeBOM: true
+                actionOnMissing: "fail"
+                keepToken: false
+                tokenPrefix: "#{"
+                tokenSuffix: "}#"
+                
+            - pwsh: |
+                terraform init -backend-config="${{ parameters.working_directory }}/backend/backend.env.tfvars" -input=false
+              env:
+                ARM_CLIENT_ID: $(client_id)
+                ARM_CLIENT_SECRET: $(client_secret)
+                ARM_SUBSCRIPTION_ID: $(subscription_id)
+                ARM_TENANT_ID: $(tenant_id)
+              displayName: Initialize configuration
+              workingDirectory: "${{ parameters.working_directory }}/main"
+              failOnStderr: true
+
+            - pwsh: terraform validate
+              displayName: Validate configuration
+              workingDirectory: "${{ parameters.working_directory }}/main"
+              failOnStderr: true
+
+            - pwsh: |
+                terraform plan -var-file="../${{ parameters.environment }}/variables.env.tfvars" -var="environment=${{ parameters.environment }}" -input=false -out=tfplan
+              env:
+                ARM_CLIENT_ID: $(client_id)
+                ARM_CLIENT_SECRET: $(client_secret)
+                ARM_SUBSCRIPTION_ID: $(subscription_id)
+                ARM_TENANT_ID: $(tenant_id)
+              displayName: Create execution plan
+              workingDirectory: "${{ parameters.working_directory }}/main"
+              failOnStderr: true
+
+            - pwsh: |
+                terraform apply -input=false -auto-approve tfplan
+                terraform output -json > output.${{ parameters.environment }}.json
+              env:
+                ARM_CLIENT_ID: $(client_id)
+                ARM_CLIENT_SECRET: $(client_secret)
+                ARM_SUBSCRIPTION_ID: $(subscription_id)
+                ARM_TENANT_ID: $(tenant_id)
+              displayName: Apply execution plan
+              workingDirectory: "${{ parameters.working_directory }}/main"
+              failOnStderr: true

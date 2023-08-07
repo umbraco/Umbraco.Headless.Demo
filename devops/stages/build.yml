@@ -1,0 +1,37 @@
+parameters:
+  - name: projectsRoot
+    type: string
+  - name: adminWebProjectName
+    type: string
+  - name: buildConfiguration
+    type: string
+
+stages:
+  - stage: build
+    displayName: Build and Publish
+    jobs:
+      - job: build
+        displayName: Build
+        steps:
+
+          - task: DotNetCoreCLI@2
+            displayName: 'Build Solution'
+            inputs:
+              command: build
+              projects: '**/*.csproj'
+              arguments: '--configuration ${{parameters.buildConfiguration}}'
+
+          - task: DotNetCoreCLI@2
+            displayName: 'Publish Admin Website Project'
+            inputs:
+              command: publish
+              publishWebProjects: False
+              projects: '${{parameters.projectsRoot}}/${{parameters.adminWebProjectName}}/${{parameters.adminWebProjectName}}.csproj'
+              arguments: '--configuration ${{parameters.buildConfiguration}} --output $(Build.ArtifactStagingDirectory)/adminweb'
+              zipAfterPublish: True
+              
+          - task: PublishBuildArtifacts@1
+            displayName: 'Publish Admin Website Artifact'
+            inputs:
+              pathtoPublish: '$(Build.ArtifactStagingDirectory)/adminweb'
+              artifactName: 'adminweb'

@@ -1,0 +1,5 @@
+resource_group_name  = "rg-#{environment}#-global-umbracoheadlessdemo"
+storage_account_name = "tf#{environment}#globalumbracoheadlessdemo"
+container_name       = "terraform-context-#{environment}#-global-umbracoheadlessdemo"
+key                  = "azure/terraform-umbracoheadlessdemo.tfstate"
+access_key           = "#{terraform_access_key}#"

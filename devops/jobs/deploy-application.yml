@@ -1,0 +1,94 @@
+parameters:
+  admin_web_project_name:
+  environment: # dev/live
+  environment_name:
+  bounded_context:
+  service_name:
+  service_connection_name:
+
+jobs:
+  - deployment: deploy-application
+    displayName: Deploy application
+    environment: ${{ parameters.environment_name }}
+    dependsOn:
+      - provisioning-infrastructure
+    variables:
+      adminWebsiteWebAppName: 'azapp-${{ parameters.environment }}-${{ parameters.bounded_context }}-${{ parameters.service_name }}-adminweb'
+
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+            - task: DownloadPipelineArtifact@2
+              displayName: 'Download Pipeline Artifacts'
+              inputs:
+                buildType: 'current'
+                targetPath: '$(Pipeline.Workspace)'
+
+            # Deploy admin website web app and settings
+            - task: AzureWebApp@1
+              displayName: 'Deploy Admin Website Web App'
+              inputs:
+                azureSubscription: ${{ parameters.service_connection_name }}
+                appName: $(adminWebsiteWebAppName)
+                package: '$(Pipeline.Workspace)/adminweb/${{ parameters.admin_web_project_name }}.zip'
+
+            - task: AzureAppServiceSettings@1
+              displayName: 'Set Admin Website Web App Settings (Dev)'
+              condition: eq('${{ parameters.environment }}', 'dev')
+              inputs:
+                azureSubscription: ${{ parameters.service_connection_name }}
+                appName: $(adminWebsiteWebAppName)
+                appSettings: |
+                  [
+                    {
+                      "name": "AzureAD__UmbracoIdHost",
+                      "value": "$(umbracoIdHost_dev)",
+                      "slotSetting": false
+                    },
+                    {
+                      "name": "AzureAD__ClientId",
+                      "value": "$(umbracoIdClientId_dev)",
+                      "slotSetting": false
+                    },
+                     {
+                      "name": "AzureAD__TenantId",
+                      "value": "$(umbracoIdTenant_dev)",
+                      "slotSetting": false
+                    },
+                    {
+                      "name": "ASPNETCORE_ENVIRONMENT",
+                      "value": "Development",
+                      "slotSetting": false
+                    }
+                  ]
+
+            - task: AzureAppServiceSettings@1
+              displayName: 'Set Admin Website Web App Settings (Live)'
+              condition: eq('${{ parameters.environment }}', 'live')
+              inputs:
+                azureSubscription: ${{ parameters.service_connection_name }}
+                appName: $(adminWebsiteWebAppName)
+                appSettings: |
+                  [
+                    {
+                      "name": "AzureAD__UmbracoIdHost",
+                      "value": "$(umbracoIdHost_live)",
+                      "slotSetting": false
+                    },
+                    {
+                      "name": "AzureAD__ClientId",
+                      "value": "$(umbracoIdClientId_live)",
+                      "slotSetting": false
+                    },
+                     {
+                      "name": "AzureAD__TenantId",
+                      "value": "$(umbracoIdTenant_live)",
+                      "slotSetting": false
+                    },
+                    {
+                      "name": "ASPNETCORE_ENVIRONMENT",
+                      "value": "Production",
+                      "slotSetting": false
+                    }
+                  ]
