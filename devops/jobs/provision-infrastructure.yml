@@ -7,7 +7,7 @@ parameters:
   service_connection_name:
 
 jobs:
-  - deployment: provisioning-infrastructure
+  - deployment: provisioning_infrastructure
     displayName: Provision infrastructure - ${{ parameters.environment }}
     environment: ${{ parameters.environment_name }}
     continueOnError: false

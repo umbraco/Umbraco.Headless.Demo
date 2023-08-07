@@ -6,7 +6,7 @@ parameters:
   service_connection_name:
 
 jobs:
-  - job: planning-infrastructure
+  - job: planning_infrastructure
     displayName: Plan infrastructure - ${{ parameters.environment }}
     continueOnError: false
     variables:

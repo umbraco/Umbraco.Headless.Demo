@@ -7,11 +7,11 @@ parameters:
   service_connection_name:
 
 jobs:
-  - deployment: deploy-application
+  - deployment: deploy_application
     displayName: Deploy application
     environment: ${{ parameters.environment_name }}
     dependsOn:
-      - provisioning-infrastructure
+      - provisioning_infrastructure
     variables:
       adminWebsiteWebAppName: 'azapp-${{ parameters.environment }}-${{ parameters.bounded_context }}-${{ parameters.service_name }}-adminweb'
 

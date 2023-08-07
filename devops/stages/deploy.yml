@@ -26,7 +26,7 @@ parameters:
     default: ''
 
 stages:
-  - stage: deploy-${{parameters.environment}}
+  - stage: deploy_${{parameters.environment}}
     displayName: "Deploy Infrastructure and Artifacts - ${{parameters.environmentName}}"
     variables:
       - group: ${{parameters.serviceVariableGroup}}
