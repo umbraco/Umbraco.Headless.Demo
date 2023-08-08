@@ -43,8 +43,8 @@ TBC
 This demo is split into two parts, an Umbraco backend and a Next.js frontend. You can access the two parts within their relevant git branches. Given these are two distinct sub projects, it's best to checkout out each branch into a different folder independantly rather than checking out this main branch and switching between them.
 
 ```bash
-git clone --branch backend/main --single-branch https://github.com/umbraco/Umbraco.Headless.Demo.git backend
-git clone --branch frontend/main --single-branch https://github.com/umbraco/Umbraco.Headless.Demo.git frontend
+git clone --branch backend/main https://github.com/umbraco/Umbraco.Headless.Demo.git backend
+git clone --branch frontend/main https://github.com/umbraco/Umbraco.Headless.Demo.git frontend
 
 ```
 
