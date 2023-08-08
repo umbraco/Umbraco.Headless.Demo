@@ -2,6 +2,7 @@ trigger:
   batch: true
   branches:
     include:
+      - backend/dev
       - backend/main
       - backend/feature/*
       - backend/hotfix/*
@@ -15,6 +16,7 @@ pr:
   drafts: false
   branches:
     include:
+      - backend/dev
       - backend/main
       - backend/feature/*
       - backend/hotfix/*
