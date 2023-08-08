@@ -51,19 +51,20 @@ stages:
       buildConfiguration: ${{ variables.buildConfiguration }}
 
   # 2. Stage: Deploy To Azure 
-  - template: stages/deploy.yml
-    parameters:
-      adminWebProjectName: ${{ variables.adminWebProjectName }}
-      environment: dev
-      environmentName: Development
-      nextEnvironment: live
-      boundedContext: ${{ variables.boundedContext }}
-      serviceName: ${{ variables.serviceName }}
-      terraformVersion: ${{ variables.terraformVersion }}
-      serviceVariableGroup: '${{ variables.boundedContext }}-global-dev' # ${{ format(variables.serviceVariableGroupFormat, variables.boundedContext, 'dev') }}
-      nextServiceVariableGroup: '${{ variables.boundedContext }}-global-live' # ${{ format(variables.nextServiceVariableGroupFormat, variables.boundedContext, 'live') }}
-      serviceConnectionName: 'Infra-dev-global-${{ variables.boundedContext }}' # ${{ format(variables.nextServiceVariableGroupFormat, 'dev', variables.boundedContext) }}
-      nextServiceConnectionName: 'Infra-live-global-${{ variables.boundedContext }}' # ${{ format(variables.nextServiceVariableGroupFormat, 'live', variables.boundedContext) }}
+  - ${{ if ne(variables['Build.Reason'], 'Schedule') }}: # Don't deploy to dev if on a schedule
+    - template: stages/deploy.yml
+      parameters:
+        adminWebProjectName: ${{ variables.adminWebProjectName }}
+        environment: dev
+        environmentName: Development
+        nextEnvironment: live
+        boundedContext: ${{ variables.boundedContext }}
+        serviceName: ${{ variables.serviceName }}
+        terraformVersion: ${{ variables.terraformVersion }}
+        serviceVariableGroup: '${{ variables.boundedContext }}-global-dev' # ${{ format(variables.serviceVariableGroupFormat, variables.boundedContext, 'dev') }}
+        nextServiceVariableGroup: '${{ variables.boundedContext }}-global-live' # ${{ format(variables.nextServiceVariableGroupFormat, variables.boundedContext, 'live') }}
+        serviceConnectionName: 'Infra-dev-global-${{ variables.boundedContext }}' # ${{ format(variables.nextServiceVariableGroupFormat, 'dev', variables.boundedContext) }}
+        nextServiceConnectionName: 'Infra-live-global-${{ variables.boundedContext }}' # ${{ format(variables.nextServiceVariableGroupFormat, 'live', variables.boundedContext) }}
 
   - ${{ if contains(variables['Build.SourceBranch'], 'backend/main') }}: # Have to use this syntax as condition is not supported on templates: https://github.com/microsoft/azure-pipelines-yaml/issues/30
     - template: stages/deploy.yml
