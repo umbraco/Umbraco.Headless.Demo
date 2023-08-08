@@ -26,7 +26,7 @@ An addition, there is a custom `Vercel` section in `appsettings.json` file where
 Clone or download this branch locally (it includes all the files you will need including a fully configured SQLlite database)
 
 ````
-git clone --branch backend/main --single-branch https://github.com/umbraco/Umbraco.Headless.Demo.git backend
+git clone --branch backend/main https://github.com/umbraco/Umbraco.Headless.Demo.git backend
 ````
 
 Once you have all the files downloaded you can open the `Umbraco.Headless.Demo.sln` solution file in the root of the repository in Visual Studio. Make sure the `Umbraco.Headless.Demo.Web` project is the startup project by right clicking the project in the Solution Explorer and choosing `Set as StartUp Project`, and then press `Ctrl + F5` to launch the site.
