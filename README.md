@@ -13,7 +13,7 @@ This branch represents the frontend of the [Umbraco Headless Demo](https://githu
 
 ## Configuration
 
-Clone or download this branch locally
+Clone or download this branch locally 
 
 ````
 git clone --branch frontend/main https://github.com/umbraco/Umbraco.Headless.Demo.git frontend
