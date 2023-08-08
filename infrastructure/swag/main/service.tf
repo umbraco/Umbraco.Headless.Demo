@@ -42,11 +42,20 @@ resource "azurerm_app_service" "azapp-adminweb" {
   }
 }
 
-# Add CNAME record
+# Add CNAME records
 resource "cloudflare_record" "adminweb_cname" {
   zone_id = var.cf_zone_id
   name    = var.environment == "live" ? "admin.headlessdemo.umbraco.com" : "${var.environment}.admin.headlessdemo.umbraco.com"
   value   = azurerm_app_service.azapp-adminweb.default_site_hostname
+  type    = "CNAME"
+  proxied = true
+  ttl     = 1
+}
+
+resource "cloudflare_record" "web_cname" {
+  zone_id = var.cf_zone_id
+  name    = var.environment == "live" ?  "headlessdemo.umbraco.com" : "${var.environment}.headlessdemo.umbraco.com"
+  value   = "cname.vercel-dns.com"
   type    = "CNAME"
   proxied = true
   ttl     = 1
