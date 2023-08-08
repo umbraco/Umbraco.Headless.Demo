@@ -1,10 +1,10 @@
 locals {
-  bounded_context = "umbracodemos"
-  service_name    = "umbracoheadlessdemo"
+  bounded_context = "demos"
+  service_name    = "swag"
   common_azure_tags = {
     environment = var.environment
     region      = "global"
-    source      = "Umbraco.Headless.Demo/infrastructure/umbracoheadlessdemo"
+    source      = "Umbraco.Headless.Demo/infrastructure/swag"
     cost_center = "Development - Integrations"
   }
 }
