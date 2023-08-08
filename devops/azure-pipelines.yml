@@ -56,7 +56,7 @@ stages:
       serviceConnectionName: 'Infra-dev-global-${{ variables.boundedContext }}' # ${{ format(variables.nextServiceVariableGroupFormat, 'dev', variables.boundedContext) }}
       nextServiceConnectionName: 'Infra-live-global-${{ variables.boundedContext }}' # ${{ format(variables.nextServiceVariableGroupFormat, 'live', variables.boundedContext) }}
 
-  - ${{ if contains(variables['Build.SourceBranchName'], 'backend/main') }}: # Have to use this syntax as condition is not supported on templates: https://github.com/microsoft/azure-pipelines-yaml/issues/30
+  - ${{ if contains(variables['Build.SourceBranch'], 'backend/main') }}: # Have to use this syntax as condition is not supported on templates: https://github.com/microsoft/azure-pipelines-yaml/issues/30
     - template: stages/deploy.yml
       parameters:
         adminWebProjectName: ${{ variables.adminWebProjectName }}
