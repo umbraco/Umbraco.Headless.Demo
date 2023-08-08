@@ -39,7 +39,7 @@ import {
   VALIDATION_TAGS
 } from 'lib/constants';
 
-const baseUrl = process.env.NEXT_SITE_URL;
+const baseUrl = process.env.NEXT_SITE_URL!;
 const umbracoBaseUrl = process.env.UMBRACO_BASE_URL!;
 const store_alias = process.env.UMBRACO_COMMERCE_STORE_ALIAS!;
 const cartExpands =

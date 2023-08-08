@@ -11,7 +11,7 @@ import { fetchJson } from 'components/cart-actions';
 import LoadingDots from 'components/loading-dots';
 import Price from 'components/price';
 
-const baseUrl = process.env.NEXT_SITE_URL;
+const baseUrl = process.env.NEXT_SITE_URL!;
 
 export default function StripePaymentForm({
   paymentMethod,
