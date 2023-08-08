@@ -11,9 +11,7 @@ import { fetchJson } from 'components/cart-actions';
 import LoadingDots from 'components/loading-dots';
 import Price from 'components/price';
 
-const baseUrl = process.env.NEXT_PUBLIC_VERCEL_URL
-  ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`
-  : 'http://localhost:3000';
+const baseUrl = process.env.NEXT_SITE_URL;
 
 export default function StripePaymentForm({
   paymentMethod,

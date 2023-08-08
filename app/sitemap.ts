@@ -1,9 +1,7 @@
 import { getPages, getProducts } from 'lib/umbraco';
 import { MetadataRoute } from 'next';
 
-const baseUrl = process.env.NEXT_PUBLIC_VERCEL_URL
-  ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`
-  : 'http://localhost:3000';
+const baseUrl = process.env.NEXT_SITE_URL;
 
 export default async function sitemap(): Promise<Promise<Promise<MetadataRoute.Sitemap>>> {
   const routesMap = [''].map((route) => ({
