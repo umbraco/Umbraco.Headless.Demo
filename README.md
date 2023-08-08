@@ -13,6 +13,12 @@ This branch represents the frontend of the [Umbraco Headless Demo](https://githu
 
 ## Configuration
 
+Clone or download this branch locally
+
+````
+git clone --branch frontend/main https://github.com/umbraco/Umbraco.Headless.Demo.git frontend
+````
+
 You will need to use the environment variables [defined in `.env.example`](.env.example) to configure this project. It's recommended you use [Vercel Environment Variables](https://vercel.com/docs/concepts/projects/environment-variables) for this, but a `.env` file is all that is necessary.
 
 > Note: You should not commit your `.env` file or it will expose secrets that will allow others to control your store.
