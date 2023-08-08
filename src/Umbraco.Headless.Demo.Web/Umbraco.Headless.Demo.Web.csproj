@@ -31,9 +31,6 @@
     <None Update="config\lang\en-US.user.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <Content Include="wwwroot\**\*">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
   </ItemGroup>
 
   <PropertyGroup>
