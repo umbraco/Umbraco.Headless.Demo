@@ -2,6 +2,7 @@
 
 import { CheckoutStep } from 'app/checkout/steps';
 import { ReactNode } from 'react';
+import CheckoutNotice from './checkout-notice';
 import CheckoutSteps from './checkout-steps';
 
 export default function CheckoutStepForm({
@@ -38,6 +39,7 @@ export default function CheckoutStepForm({
       <div className={'flex-1 p-8'}>
         <div className="mx-auto max-w-2xl">
           <div className="xl:py-8">
+            <CheckoutNotice className='mb-8 -mt-4' />
             {heading && <h1 className="text-2xl font-bold md:text-3xl">{heading}</h1>}
             {children}
           </div>

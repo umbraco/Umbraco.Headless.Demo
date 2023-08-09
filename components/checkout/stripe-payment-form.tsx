@@ -1,5 +1,6 @@
 'use client';
 
+import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 import { CheckoutStep } from 'app/checkout/steps';
 import { CartContext } from 'components/cart-context';
 import { PaymentMethod, UmbracoCommerceInlineCheckoutPaymentMethod } from 'lib/umbraco/types';
@@ -108,6 +109,12 @@ export function InnerStripePaymentForm() {
 
   return (
     <form onSubmit={handleSubmit} className="max-w-xl p-8">
+      {stripe && isReady && process.env.NEXT_PUBLIC_DISABLE_DEMO_WARNINGS !== '1' && (
+        <div className='border-2 border-red-500 bg-red-50 rounded-lg p-4 mb-8'>
+          <h3 className="text-lg font-bold mb-2 text-red-600"><ExclamationTriangleIcon className="w-8 h-8 inline-block stroke-2 mr-1" /> Test Transaction</h3>
+          <p className="text-sm italic">This is a test transaction. See the <a href="https://stripe.com/docs/testing#international-cards" target="_blank" className='underline'>Stripe docs</a> for valid test card credentials you can use.</p>
+        </div>
+      )}
       <PaymentElement />
       {stripe && isReady && (
         <button className="btn btn-lg mt-8 w-full bg-umb-blue text-white hover:bg-umb-blue-active">
