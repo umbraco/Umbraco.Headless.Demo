@@ -79,7 +79,7 @@ resource "time_sleep" "adminweb_txt_wait_swag" {
 # Hostname Binding in Azure
 resource "azurerm_app_service_custom_hostname_binding" "adminweb_hostname_binding_swag" {
   hostname            = var.environment == "live" ? "admin.headlessdemo.umbraco.com" : "${var.environment}.admin.headlessdemo.umbraco.com"
-  app_service_name    = azurerm_app_service.azapp_adminweb-swag.name
+  app_service_name    = azurerm_app_service.azapp_adminweb_swag.name
   resource_group_name = data.azurerm_resource_group.rg.name
   depends_on = [time_sleep.adminweb_txt_wait_swag]
 }
