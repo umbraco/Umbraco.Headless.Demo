@@ -50,6 +50,7 @@ resource "cloudflare_record" "adminweb_cname_swag" {
   type    = "CNAME"
   proxied = true
   ttl     = 1
+  allow_overwrite = true
 }
 
 resource "cloudflare_record" "web_cname_swag" {
@@ -59,6 +60,7 @@ resource "cloudflare_record" "web_cname_swag" {
   type    = "CNAME"
   proxied = true
   ttl     = 1
+  allow_overwrite = true
 }
 
 # TXT records for domain validation
@@ -68,6 +70,7 @@ resource "cloudflare_record" "adminweb_txt_swag" {
   value   = azurerm_app_service.azapp_adminweb_swag.custom_domain_verification_id
   type    = "TXT"
   ttl     = 1
+  allow_overwrite = true
 }
 
 # Time delay between the txt records and the hostname binding
