@@ -10,15 +10,15 @@ locals {
 }
 
 # Resource group
-data "azurerm_resource_group" "rg" {
-  name = "rg-${var.environment}-global-${local.bounded_context}"
+data "azurerm_resource_group" "rg_swag" {
+  name = "rg-${var.environment}-global-${local.bounded_context}-${local.service_name}"
 }
 
 # App service plan
 resource "azurerm_app_service_plan" "asp_swag" {
   name                = "asp-${var.environment}-${local.bounded_context}-${local.service_name}"
-  location            = data.azurerm_resource_group.rg.location
-  resource_group_name = data.azurerm_resource_group.rg.name
+  location            = data.azurerm_resource_group.rg_swag.location
+  resource_group_name = data.azurerm_resource_group.rg_swag.name
   tags                = local.common_azure_tags
   sku {
     tier = "Standard"
@@ -29,8 +29,8 @@ resource "azurerm_app_service_plan" "asp_swag" {
 # App service - Admin Web
 resource "azurerm_app_service" "azapp_adminweb_swag" {
   name                = "azapp-${var.environment}-${local.bounded_context}-${local.service_name}-adminweb"
-  location            = data.azurerm_resource_group.rg.location
-  resource_group_name = data.azurerm_resource_group.rg.name
+  location            = data.azurerm_resource_group.rg_swag.location
+  resource_group_name = data.azurerm_resource_group.rg_swag.name
   app_service_plan_id = azurerm_app_service_plan.asp_swag.id
   https_only          = true
   tags                = local.common_azure_tags
@@ -80,6 +80,6 @@ resource "time_sleep" "adminweb_txt_wait_swag" {
 resource "azurerm_app_service_custom_hostname_binding" "adminweb_hostname_binding_swag" {
   hostname            = var.environment == "live" ? "admin.headlessdemo.umbraco.com" : "${var.environment}.admin.headlessdemo.umbraco.com"
   app_service_name    = azurerm_app_service.azapp_adminweb_swag.name
-  resource_group_name = data.azurerm_resource_group.rg.name
+  resource_group_name = data.azurerm_resource_group.rg_swag.name
   depends_on = [time_sleep.adminweb_txt_wait_swag]
 }
