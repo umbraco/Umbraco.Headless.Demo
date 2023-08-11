@@ -32,7 +32,7 @@ namespace Umbraco.Headless.Demo.Web
         /// </remarks>
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddUmbraco(_env, _config)
+            services.AddUmbraco(_env, _config) 
                 .AddBackOffice()
                 .AddWebsite()
                 .AddDeliveryApi()
