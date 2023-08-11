@@ -1,5 +1,5 @@
-resource_group_name  = "rg-#{environment}#-global-demos-swag"
+resource_group_name  = "rg-#{environment}#-global-demos"
 storage_account_name = "tf#{environment}#globaldemos"
-container_name       = "terraform-context-#{environment}#-global-demos-swag"
-key                  = "azure/terraform-demos.tfstate"
+container_name       = "terraform-context-#{environment}#-global-demos"
+key                  = "azure/terraform-demos-swag.tfstate"
 access_key           = "#{terraform_access_key}#"
