@@ -15,7 +15,7 @@ data "azurerm_resource_group" "rg" {
 }
 
 # App service plan
-resource "azurerm_app_service_plan" "asp" {
+resource "azurerm_app_service_plan" "asp-swag" {
   name                = "asp-${var.environment}-${local.bounded_context}-${local.service_name}"
   location            = data.azurerm_resource_group.rg.location
   resource_group_name = data.azurerm_resource_group.rg.name
@@ -27,11 +27,11 @@ resource "azurerm_app_service_plan" "asp" {
 }
 
 # App service - Admin Web
-resource "azurerm_app_service" "azapp-adminweb" {
+resource "azurerm_app_service" "azapp-adminweb-swag" {
   name                = "azapp-${var.environment}-${local.bounded_context}-${local.service_name}-adminweb"
   location            = data.azurerm_resource_group.rg.location
   resource_group_name = data.azurerm_resource_group.rg.name
-  app_service_plan_id = azurerm_app_service_plan.asp.id
+  app_service_plan_id = azurerm_app_service_plan.asp-swag.id
   https_only          = true
   tags                = local.common_azure_tags
 
@@ -43,16 +43,16 @@ resource "azurerm_app_service" "azapp-adminweb" {
 }
 
 # Add CNAME records
-resource "cloudflare_record" "adminweb_cname" {
+resource "cloudflare_record" "adminweb-cname-swag" {
   zone_id = var.cf_zone_id
   name    = var.environment == "live" ? "admin.headlessdemo.umbraco.com" : "${var.environment}.admin.headlessdemo.umbraco.com"
-  value   = azurerm_app_service.azapp-adminweb.default_site_hostname
+  value   = azurerm_app_service.azapp-adminweb-swag.default_site_hostname
   type    = "CNAME"
   proxied = true
   ttl     = 1
 }
 
-resource "cloudflare_record" "web_cname" {
+resource "cloudflare_record" "web-cname-swag" {
   zone_id = var.cf_zone_id
   name    = var.environment == "live" ?  "headlessdemo.umbraco.com" : "${var.environment}.headlessdemo.umbraco.com"
   value   = "cname.vercel-dns.com"
@@ -62,24 +62,24 @@ resource "cloudflare_record" "web_cname" {
 }
 
 # TXT records for domain validation
-resource "cloudflare_record" "adminweb_txt" {
+resource "cloudflare_record" "adminweb-txt-swag" {
   zone_id = var.cf_zone_id
   name    = var.environment == "live" ? "asuid.admin.headlessdemo.umbraco.com" : "asuid.${var.environment}.admin.headlessdemo.umbraco.com"
-  value   = azurerm_app_service.azapp-adminweb.custom_domain_verification_id
+  value   = azurerm_app_service.azapp-adminweb-swag.custom_domain_verification_id
   type    = "TXT"
   ttl     = 1
 }
 
 # Time delay between the txt records and the hostname binding
-resource "time_sleep" "adminweb_txt_wait" {
-  depends_on      = [cloudflare_record.adminweb_txt]
+resource "time_sleep" "adminweb-txt-wait-swag" {
+  depends_on      = [cloudflare_record.adminweb-txt-swag]
   create_duration = "60s"
 }
 
 # Hostname Binding in Azure
-resource "azurerm_app_service_custom_hostname_binding" "adminweb_hostname_binding" {
+resource "azurerm_app_service_custom_hostname_binding" "adminweb-hostname-binding-swag" {
   hostname            = var.environment == "live" ? "admin.headlessdemo.umbraco.com" : "${var.environment}.admin.headlessdemo.umbraco.com"
-  app_service_name    = azurerm_app_service.azapp-adminweb.name
+  app_service_name    = azurerm_app_service.azapp-adminweb-swag.name
   resource_group_name = data.azurerm_resource_group.rg.name
   depends_on = [time_sleep.adminweb_txt_wait]
 }
