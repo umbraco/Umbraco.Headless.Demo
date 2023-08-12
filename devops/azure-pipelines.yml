@@ -37,7 +37,7 @@ variables:
   adminWebProjectName: 'Umbraco.Headless.Demo.Web'
   buildConfiguration: 'Release'
   boundedContext: 'demos'
-  serviceName: 'swag'
+  serviceName: 'headless-demo'
   terraformVersion: 1.1.7
   serviceVariableGroupFormat: '{0}-global-{1}' # '{boundedContext}-global-{environment}'
   serviceConnectionNameFormat: 'Infra-{0}-global-{1}' # 'Infra-{environment}-global-{boundedContext}'
