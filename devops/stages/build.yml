@@ -27,11 +27,11 @@ stages:
               command: publish
               publishWebProjects: False
               projects: '${{parameters.projectsRoot}}/${{parameters.adminWebProjectName}}/${{parameters.adminWebProjectName}}.csproj'
-              arguments: '--configuration ${{parameters.buildConfiguration}} --output $(Build.ArtifactStagingDirectory)/adminweb'
+              arguments: '--configuration ${{parameters.buildConfiguration}} --output $(Build.ArtifactStagingDirectory)/umbraco'
               zipAfterPublish: True
               
           - task: PublishBuildArtifacts@1
             displayName: 'Publish Admin Website Artifact'
             inputs:
-              pathtoPublish: '$(Build.ArtifactStagingDirectory)/adminweb'
-              artifactName: 'adminweb'
+              pathtoPublish: '$(Build.ArtifactStagingDirectory)/umbraco'
+              artifactName: 'umbraco'

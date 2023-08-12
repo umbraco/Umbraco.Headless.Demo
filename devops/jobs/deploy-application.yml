@@ -13,7 +13,7 @@ jobs:
     dependsOn:
       - provisioning_infrastructure
     variables:
-      adminWebsiteWebAppName: 'azapp-${{ parameters.environment }}-${{ parameters.bounded_context }}-${{ parameters.service_name }}-adminweb'
+      adminWebsiteWebAppName: 'azapp-${{ parameters.environment }}-${{ parameters.bounded_context }}-${{ parameters.service_name }}-umbraco'
 
     strategy:
       runOnce:
@@ -31,7 +31,7 @@ jobs:
               inputs:
                 azureSubscription: ${{ parameters.service_connection_name }}
                 appName: $(adminWebsiteWebAppName)
-                package: '$(Pipeline.Workspace)/adminweb/${{ parameters.admin_web_project_name }}.zip'
+                package: '$(Pipeline.Workspace)/umbraco/${{ parameters.admin_web_project_name }}.zip'
                 deploymentMethod: 'zipDeploy' # Force zipDeploy otherwise it reverts to runFromPackage which is readonly
 
             - task: AzureAppServiceSettings@1
