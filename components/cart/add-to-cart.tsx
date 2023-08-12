@@ -2,6 +2,7 @@
 
 import Price from 'components/price';
 import ProductVariantsPicker from 'components/product/product-variants-picker';
+import StockNotificationForm from 'components/product/stock-notification-form';
 import { Product, ProductVariant } from 'lib/umbraco/types';
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
@@ -30,7 +31,8 @@ export default function AddToCart({ product }: { product: Product }) {
         variants={product.variants}
         onSelect={setSelectedVariant}
       />
-      <AddToCartButton className="mt-8 w-full" variant={selectedVariant} />
+      {(!selectedVariant || selectedVariant.availableForSale) && (<AddToCartButton className="mt-8 w-full" variant={selectedVariant} />)}
+      {(selectedVariant && !selectedVariant.availableForSale) && (<StockNotificationForm  className="mt-8 w-full" variant={selectedVariant} />)}
       {priceElement &&
         selectedVariant &&
         createPortal(

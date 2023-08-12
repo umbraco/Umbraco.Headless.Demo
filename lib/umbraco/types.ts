@@ -427,3 +427,9 @@ export type UmbracoCommerceTransactionInfo = {
   transactionId: string;
   // TODO: other properties
 };
+
+export type UmbracoFormsResponse = {
+  status: number,
+  title: string,
+  errors?: { [id: string]: string[] }
+}

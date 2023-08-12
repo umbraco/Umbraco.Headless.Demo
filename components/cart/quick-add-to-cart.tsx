@@ -6,6 +6,7 @@ import clsx from 'clsx';
 import { CartContext } from 'components/cart-context';
 import Price from 'components/price';
 import Carousel from 'components/product/carousel';
+import StockNotificationForm from 'components/product/stock-notification-form';
 import { useMediaQuery } from 'hooks/use-media-query';
 import { Product, ProductVariant } from 'lib/umbraco/types';
 import { useContext, useEffect, useState } from 'react';
@@ -88,7 +89,8 @@ export default function QuickAddToCart({ product }: { product: Product }) {
                       />
                     </div>
                     <div className="p-8">
-                      <AddToCartButton className="w-full" variant={selectedVariant} />
+                      {(!selectedVariant || selectedVariant.availableForSale) && (<AddToCartButton className="w-full" variant={selectedVariant} />)}
+                      {(selectedVariant && !selectedVariant.availableForSale) && (<StockNotificationForm  className="w-full" variant={selectedVariant} />)}
                     </div>
                   </div>
                 </div>

@@ -29,3 +29,4 @@ export const DEFAULT_OPTION = 'Default';
 export const HIDDEN_PRODUCT_TAG = 'hidden'; // Required
 export const UMBRACO_CONTENT_API_ENDPOINT = '/umbraco/delivery/api/v1';
 export const UMBRACO_COMMERCE_API_ENDPOINT = '/umbraco/commerce/storefront/api/v1';
+export const UMBRACO_FORMS_API_ENDPOINT = '/umbraco/forms/api/v1';
