@@ -159,10 +159,11 @@ export default function ProductVariantsPicker({
                 <TagButton
                   key={`${option.alias}_${value.alias}`}
                   size={size}
-                  selected={isActive && isAvailableForSale}
+                  selected={isActive}
                   disabled={!isAvailableForSale}
+                  allowDisabledClick={true}
                   onClick={() =>
-                    !isActive && isAvailableForSale && setSelectedVariantParams(optionParams)
+                    !isActive && setSelectedVariantParams(optionParams)
                   }
                 >
                   <span>{value.name}</span>

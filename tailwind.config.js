@@ -27,10 +27,11 @@ module.exports = {
         'umb-lilac': '#E3CCE0',
         'umb-gray': '#F9F7F4',
         'umb-gray-active': '#e7dfd3',
-        'stb-5': 'rgba(90,20,10,.05)',
-        'stb-10': 'rgba(90,20,10,.1)',
-        'stb-15': 'rgba(90,20,10,.15)',
-        'stb-20': 'rgba(90,20,10,.2)' // 231 223 211
+        'stb-5': 'rgba(50,20,10,.05)',
+        'stb-10': 'rgba(50,20,10,.1)',
+        'stb-15': 'rgba(50,20,10,.15)',
+        'stb-20': 'rgba(50,20,10,.2)', // 231 223 211
+        'stb-40': 'rgba(40,20,10,.4)'
       },
       keyframes: {
         blink: {

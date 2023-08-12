@@ -1,4 +1,3 @@
-import { isUmbracoError } from 'lib/type-guards';
 
 import {
   Cart,
@@ -26,6 +25,7 @@ import {
   UmbracoCommercePrice,
   UmbracoCommerceShippingMethod,
   UmbracoCommerceVariantPropertyValue,
+  UmbracoFormsResponse,
   UmbracoLink,
   UmbracoMedia,
   UmbracoNode,
@@ -36,6 +36,7 @@ import {
   DEFAULT_OPTION,
   UMBRACO_COMMERCE_API_ENDPOINT,
   UMBRACO_CONTENT_API_ENDPOINT,
+  UMBRACO_FORMS_API_ENDPOINT,
   VALIDATION_TAGS
 } from 'lib/constants';
 
@@ -53,6 +54,10 @@ const apis: { [key: string]: any } = {
   commerce: {
     endpoint: `${umbracoBaseUrl}${UMBRACO_COMMERCE_API_ENDPOINT}`,
     api_key: process.env.UMBRACO_COMMERCE_API_KEY!
+  },
+  forms: {
+    endpoint: `${umbracoBaseUrl}${UMBRACO_FORMS_API_ENDPOINT}`,
+    api_key: process.env.UMBRACO_FORMS_API_KEY!
   }
 };
 
@@ -101,17 +106,17 @@ export async function umbracoFetch<T>(opts: {
 
     const result = await fetch(url, options);
 
-    //console.log(url);
-    //console.log(options.body);
+    // console.log(url);
+    // console.log(options.body);
 
-    //const txt = await result.text();
-    //console.log(url)
-    //console.log(txt)
-    //const body = JSON.parse(txt)
+    // const txt = await result.text();
+    // console.log(url)
+    // console.log(txt)
+    // const body = JSON.parse(txt)
 
     const body = await result.json();
 
-    if (body.errors) {
+    if (body && body.errors) {
       console.log(body.errors);
       throw body.errors[0];
     }
@@ -121,12 +126,12 @@ export async function umbracoFetch<T>(opts: {
       body
     };
   } catch (e) {
-    if (isUmbracoError(e)) {
-      throw {
-        status: e.status || 500,
-        message: e.message
-      };
-    }
+    // if (isUmbracoError(e)) {
+    //   throw {
+    //     status: e.status || 500,
+    //     message: e.message
+    //   };
+    // }
 
     throw {
       error: e
@@ -166,6 +171,23 @@ export async function umbracoCommerceFetch<T>(opts: {
     ...opts.headers
   };
   opts.path = apis['commerce'].endpoint + opts.path;
+  return await umbracoFetch<T>(opts);
+}
+
+export async function umbracoFormsFetch<T>(opts: {
+  method: string;
+  path: string;
+  query?: Record<string, string | string[]>;
+  headers?: HeadersInit;
+  cache?: RequestCache;
+  tags?: string[];
+  payload?: any | undefined;
+}): Promise<{ status: number; body: T } | never> {
+  opts.headers = {
+    'Api-Key': apis['forms'].api_key,
+    ...opts.headers
+  };
+  opts.path = apis['forms'].endpoint + opts.path;
   return await umbracoFetch<T>(opts);
 }
 
@@ -887,4 +909,28 @@ export async function confirmInlineCheckout(
   });
 
   return res.body;
+}
+
+export async function submitStockNotificationForm(
+  email: string,
+  productReference: string
+): Promise<UmbracoFormsResponse> {
+
+  const idParts = productReference.split(':')
+
+  const res = await umbracoFormsFetch<UmbracoFormsResponse>({
+    method: 'POST',
+    path: `/entries/${process.env.UMBRACO_FORMS_STOCK_NOTIFICATION_FORM_ID!}`,
+    payload: {
+      values: {
+        productReference: idParts[0],
+        productVariantReference: idParts.length > 1 ? idParts[1] : undefined,
+        email: email
+      }
+    },
+    cache: 'no-store'
+  });
+
+  return res.body;
+
 }
