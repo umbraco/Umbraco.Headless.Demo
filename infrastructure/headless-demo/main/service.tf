@@ -46,7 +46,7 @@ resource "azurerm_app_service" "azapp_umbraco_headlessdemo" {
 # Add CNAME records
 resource "cloudflare_record" "umbraco_cname_headlessdemo" {
   zone_id = var.cf_zone_id
-  name    = var.environment == "live" ? "admin.${var.domain}" : "${var.environment}.admin.${var.domain}"
+  name    = var.environment == "live" ? "admin.${local.domain}" : "${var.environment}.admin.${local.domain}"
   value   = azurerm_app_service.azapp_umbraco_headlessdemo.default_site_hostname
   type    = "CNAME"
   proxied = true
@@ -55,7 +55,7 @@ resource "cloudflare_record" "umbraco_cname_headlessdemo" {
 
 resource "cloudflare_record" "web_cname_headlessdemo" {
   zone_id = var.cf_zone_id
-  name    = var.environment == "live" ?  "${var.domain}" : "${var.environment}.${var.domain}"
+  name    = var.environment == "live" ?  "${local.domain}" : "${var.environment}.${local.domain}"
   value   = "cname.vercel-dns.com"
   type    = "CNAME"
   proxied = true
@@ -65,7 +65,7 @@ resource "cloudflare_record" "web_cname_headlessdemo" {
 # TXT records for domain validation
 resource "cloudflare_record" "umbraco_txt_headlessdemo" {
   zone_id = var.cf_zone_id
-  name    = var.environment == "live" ? "asuid.admin.${var.domain}" : "asuid.${var.environment}.admin.${var.domain}"
+  name    = var.environment == "live" ? "asuid.admin.${local.domain}" : "asuid.${var.environment}.admin.${local.domain}"
   value   = azurerm_app_service.azapp_umbraco_headlessdemo.custom_domain_verification_id
   type    = "TXT"
   ttl     = 1
@@ -79,7 +79,7 @@ resource "time_sleep" "umbraco_txt_wait_headlessdemo" {
 
 # Hostname Binding in Azure
 resource "azurerm_app_service_custom_hostname_binding" "umbraco_hostname_binding_headlessdemo" {
-  hostname            = var.environment == "live" ? "admin.${var.domain}" : "${var.environment}.admin.${var.domain}"
+  hostname            = var.environment == "live" ? "admin.${local.domain}" : "${var.environment}.admin.${local.domain}"
   app_service_name    = azurerm_app_service.azapp_umbraco_headlessdemo.name
   resource_group_name = data.azurerm_resource_group.rg_headlessdemo.name
   depends_on = [time_sleep.umbraco_txt_wait_headlessdemo]
