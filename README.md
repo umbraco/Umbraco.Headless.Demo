@@ -1,5 +1,7 @@
 # Umbraco Headless Demo 🦄
 
+[![Demo - Frontend](https://img.shields.io/badge/Demo-Frontend-2ea44f)](https://headless-demo.umbraco.com) [![Demo - Backend](https://img.shields.io/badge/Demo-Backend-2ea44f)](https://admin.headless-demo.umbraco.com)
+
 The Umbraco Headless Demo is an example solution showcasing the capabilities and features of Umbraco's various headless offerings, all combined into one real-world example. The demo takes the form of a swag store with products and a full checkout flow, as well as suplimentary content pages. 
 
 ![Screenshots](assets/animation.gif)
