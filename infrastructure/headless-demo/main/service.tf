@@ -27,7 +27,7 @@ resource "azurerm_app_service_plan" "asp_umbraco_headlessdemo" {
   }
 }
 
-# App service - Admin Web
+# App service - Umbraco
 resource "azurerm_app_service" "azapp_umbraco_headlessdemo" {
   name                = "azapp-${var.environment}-${local.bounded_context}-${local.service_name}-umbraco"
   location            = data.azurerm_resource_group.rg_headlessdemo.location

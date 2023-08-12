@@ -1,5 +1,5 @@
 parameters:
-  admin_web_project_name:
+  umbraco_project_name:
   environment: # dev/live
   environment_name:
   bounded_context:
@@ -27,15 +27,15 @@ jobs:
 
             # Deploy admin website web app and settings
             - task: AzureWebApp@1
-              displayName: 'Deploy Admin Website Web App'
+              displayName: 'Deploy Umbracosite Web App'
               inputs:
                 azureSubscription: ${{ parameters.service_connection_name }}
                 appName: $(adminWebsiteWebAppName)
-                package: '$(Pipeline.Workspace)/umbraco/${{ parameters.admin_web_project_name }}.zip'
+                package: '$(Pipeline.Workspace)/umbraco/${{ parameters.umbraco_project_name }}.zip'
                 deploymentMethod: 'zipDeploy' # Force zipDeploy otherwise it reverts to runFromPackage which is readonly
 
             - task: AzureAppServiceSettings@1
-              displayName: 'Set Admin Website Web App Settings (Dev)'
+              displayName: 'Set Umbracosite Web App Settings (Dev)'
               condition: eq('${{ parameters.environment }}', 'dev')
               inputs:
                 azureSubscription: ${{ parameters.service_connection_name }}
@@ -65,7 +65,7 @@ jobs:
                   ]
 
             - task: AzureAppServiceSettings@1
-              displayName: 'Set Admin Website Web App Settings (Live)'
+              displayName: 'Set Umbracosite Web App Settings (Live)'
               condition: eq('${{ parameters.environment }}', 'live')
               inputs:
                 azureSubscription: ${{ parameters.service_connection_name }}

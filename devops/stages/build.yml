@@ -1,7 +1,7 @@
 parameters:
   - name: projectsRoot
     type: string
-  - name: adminWebProjectName
+  - name: umbracoProjectName
     type: string
   - name: buildConfiguration
     type: string
@@ -22,16 +22,16 @@ stages:
               arguments: '--configuration ${{parameters.buildConfiguration}}'
 
           - task: DotNetCoreCLI@2
-            displayName: 'Publish Admin Website Project'
+            displayName: 'Publish Umbracosite Project'
             inputs:
               command: publish
               publishWebProjects: False
-              projects: '${{parameters.projectsRoot}}/${{parameters.adminWebProjectName}}/${{parameters.adminWebProjectName}}.csproj'
+              projects: '${{parameters.projectsRoot}}/${{parameters.umbracoProjectName}}/${{parameters.umbracoProjectName}}.csproj'
               arguments: '--configuration ${{parameters.buildConfiguration}} --output $(Build.ArtifactStagingDirectory)/umbraco'
               zipAfterPublish: True
               
           - task: PublishBuildArtifacts@1
-            displayName: 'Publish Admin Website Artifact'
+            displayName: 'Publish Umbracosite Artifact'
             inputs:
               pathtoPublish: '$(Build.ArtifactStagingDirectory)/umbraco'
               artifactName: 'umbraco'

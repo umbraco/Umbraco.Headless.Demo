@@ -34,7 +34,7 @@ pool:
 
 variables:
   projectsRoot: 'src/'
-  adminWebProjectName: 'Umbraco.Headless.Demo.Web'
+  umbracoProjectName: 'Umbraco.Headless.Demo.Web'
   buildConfiguration: 'Release'
   boundedContext: 'demos'
   serviceName: 'headless-demo'
@@ -47,14 +47,14 @@ stages:
   - template: stages/build.yml
     parameters:
       projectsRoot: ${{ variables.projectsRoot }}
-      adminWebProjectName: ${{ variables.adminWebProjectName }}
+      umbracoProjectName: ${{ variables.umbracoProjectName }}
       buildConfiguration: ${{ variables.buildConfiguration }}
 
   # 2. Stage: Deploy To Azure 
   - ${{ if ne(variables['Build.Reason'], 'Schedule') }}: # Don't deploy to dev if on a schedule
     - template: stages/deploy.yml
       parameters:
-        adminWebProjectName: ${{ variables.adminWebProjectName }}
+        umbracoProjectName: ${{ variables.umbracoProjectName }}
         environment: dev
         environmentName: Development
         nextEnvironment: live
@@ -69,7 +69,7 @@ stages:
   - ${{ if contains(variables['Build.SourceBranch'], 'backend/main') }}: # Have to use this syntax as condition is not supported on templates: https://github.com/microsoft/azure-pipelines-yaml/issues/30
     - template: stages/deploy.yml
       parameters:
-        adminWebProjectName: ${{ variables.adminWebProjectName }}
+        umbracoProjectName: ${{ variables.umbracoProjectName }}
         environment: live
         environmentName: Live
         boundedContext: ${{ variables.boundedContext }}
