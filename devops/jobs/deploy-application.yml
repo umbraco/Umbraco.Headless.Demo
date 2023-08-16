@@ -27,7 +27,7 @@ jobs:
 
             # Deploy admin website web app and settings
             - task: AzureWebApp@1
-              displayName: 'Deploy Umbracosite Web App'
+              displayName: 'Deploy Umbraco Web App'
               inputs:
                 azureSubscription: ${{ parameters.service_connection_name }}
                 appName: $(adminWebsiteWebAppName)
@@ -35,7 +35,7 @@ jobs:
                 deploymentMethod: 'zipDeploy' # Force zipDeploy otherwise it reverts to runFromPackage which is readonly
 
             - task: AzureAppServiceSettings@1
-              displayName: 'Set Umbracosite Web App Settings (Dev)'
+              displayName: 'Set Umbraco Web App Settings (Dev)'
               condition: eq('${{ parameters.environment }}', 'dev')
               inputs:
                 azureSubscription: ${{ parameters.service_connection_name }}
@@ -65,7 +65,7 @@ jobs:
                   ]
 
             - task: AzureAppServiceSettings@1
-              displayName: 'Set Umbracosite Web App Settings (Live)'
+              displayName: 'Set Umbraco Web App Settings (Live)'
               condition: eq('${{ parameters.environment }}', 'live')
               inputs:
                 azureSubscription: ${{ parameters.service_connection_name }}
