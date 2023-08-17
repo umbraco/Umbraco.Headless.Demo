@@ -61,6 +61,11 @@ jobs:
                       "name": "ASPNETCORE_ENVIRONMENT",
                       "value": "Development",
                       "slotSetting": false
+                    },
+                    {
+                      "name": "Site__DisableEdits",
+                      "value": true,
+                      "slotSetting": false
                     }
                   ]
 
@@ -90,6 +95,11 @@ jobs:
                     {
                       "name": "ASPNETCORE_ENVIRONMENT",
                       "value": "Production",
+                      "slotSetting": false
+                    },
+                    {
+                      "name": "Site__DisableEdits",
+                      "value": true,
                       "slotSetting": false
                     }
                   ]
