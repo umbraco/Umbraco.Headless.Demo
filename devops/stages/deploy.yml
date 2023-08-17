@@ -1,5 +1,5 @@
 parameters:
-  - name: adminWebProjectName
+  - name: umbracoProjectName
     type: string
   - name: environment
     type: string
@@ -57,7 +57,7 @@ stages:
       # Deploy the applications from the built artifacts
       - template: ../jobs/deploy-application.yml
         parameters:
-          admin_web_project_name: ${{ parameters.adminWebProjectName }}
+          umbraco_project_name: ${{ parameters.umbracoProjectName }}
           environment: ${{ parameters.environment }}
           environment_name: ${{ parameters.environmentName }}
           bounded_context: ${{ parameters.boundedContext }}
