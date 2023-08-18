@@ -27,7 +27,7 @@ import { cookies } from 'next/headers';
 export const setCurrentCart = async (cart: Cart | undefined): Promise<Cart | undefined> => {
   let cartId = cookies().get('cartId')?.value;
   if (cart && cart.id !== cartId) {
-    cookies().set('cartId', cart.id);
+    cookies().set('cartId', cart.id, { expires: Date.now() + (60 * 60 * 1000) }); // One hour max
   } else if (!cart && cartId) {
     cookies().delete('cartId');
   }
