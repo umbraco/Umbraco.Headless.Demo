@@ -41,16 +41,20 @@ namespace Umbraco.Headless.Demo.EventHandlers
             // Fire revalidations
             if (toRevalidate.Count > 0)
             {
-                await Task.WhenAll(toRevalidate.Select(async evt =>
+                try
                 {
-                    var msg = new HttpRequestMessage(HttpMethod.Post, $"{_configuration["Vercel:SiteUrl"]}/api/revalidate?secret={_configuration["Vercel:RevalidationSecret"]}");
-                    msg.Headers.Add("x-topic", evt);
-                    var resp = await _client.SendAsync(msg, cancellationToken).ConfigureAwait(false);
-                    if (resp.StatusCode != HttpStatusCode.OK)
+                    await Task.WhenAll(toRevalidate.Select(async evt =>
                     {
-                        // Log error
-                    }
-                }));
+                        var msg = new HttpRequestMessage(HttpMethod.Post, $"{_configuration["Vercel:SiteUrl"]}/api/revalidate?secret={_configuration["Vercel:RevalidationSecret"]}");
+                        msg.Headers.Add("x-topic", evt);
+                        var resp = await _client.SendAsync(msg, cancellationToken).ConfigureAwait(false);
+                        if (resp.StatusCode != HttpStatusCode.OK)
+                        {
+                            // Log error
+                        }
+                    }));
+                }
+                catch { }
             }
         }
     }
