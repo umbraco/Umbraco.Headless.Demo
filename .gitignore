@@ -486,5 +486,3 @@ $RECYCLE.BIN/
 **/Umbraco/Logs/
 **/Umbraco/mediacache/
 *.local.sln
-*.sqlite.db-wal
-*.sqlite.db-shm
