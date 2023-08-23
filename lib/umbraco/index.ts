@@ -116,10 +116,10 @@ export async function umbracoFetch<T>(opts: {
 
     const body = await result.json();
 
-    if (body && body.errors) {
-      console.log(body.errors);
-      throw body.errors[0];
-    }
+    // if (body && body.errors) {
+    //   console.log(body.errors);
+    //   throw body.errors[0];
+    // }
 
     return {
       status: result.status,
@@ -480,6 +480,7 @@ const reshapePage = (node: UmbracoNode): Page => {
       title: sidebarTitle,
       description: sidebarDescription
     },
+    properties: node.properties,
     seo: {
       title: metaTitle,
       description: metaDescription
@@ -788,6 +789,9 @@ export async function getPage(handle: string): Promise<Page> {
   const res = await umbracoContentFetch<UmbracoNode>({
     method: 'GET',
     path: `/content/item/${handle}`,
+    query: {
+      expand: 'all'
+    },
     headers: {
       'Start-Item': 'pages'
     },
@@ -802,7 +806,8 @@ export async function getPages(): Promise<Page[]> {
     method: 'GET',
     path: `/content`,
     query: {
-      fetch: `children:pages`
+      fetch: `children:pages`,
+      expand: 'all'
     },
     tags: [VALIDATION_TAGS.pages]
   });
@@ -927,6 +932,24 @@ export async function submitStockNotificationForm(
         productVariantReference: idParts.length > 1 ? idParts[1] : undefined,
         email: email
       }
+    },
+    cache: 'no-store'
+  });
+
+  return res.body;
+
+}
+
+export async function submitForm(
+  formId: string,
+  data: any
+): Promise<UmbracoFormsResponse> {
+
+  const res = await umbracoFormsFetch<UmbracoFormsResponse>({
+    method: 'POST',
+    path: `/entries/${formId}`,
+    payload: {
+      values: data
     },
     cache: 'no-store'
   });

@@ -66,5 +66,8 @@ module.exports = {
       );
     })
   ],
-  safelist: [{ pattern: /bg-umb-.*/ }]
+  safelist: [
+    { pattern: /bg-umb-.*/ },
+    { pattern: /col-span-.*/ }
+  ]
 };

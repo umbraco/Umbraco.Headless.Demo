@@ -1,10 +1,10 @@
+import UmbForm from 'components/form';
 import Headline from "components/layout/headline";
 import PageLayout from 'components/layout/page-layout';
 import Prose from 'components/prose';
+import { getPage } from 'lib/umbraco';
 import { Metadata } from "next";
 import Link from 'next/link';
-
-import { getPage } from 'lib/umbraco';
 import { notFound } from 'next/navigation';
 
 export const runtime = 'edge';
@@ -50,6 +50,7 @@ export default async function Page({
             <h1 className="mb-8 text-5xl font-bold">{page.title}</h1>
         </div>
         <Prose className="mb-8" html={page.body} />
+        {page.properties['form']?.form && (<UmbForm form={page.properties['form'].form} />)}
         <p className="italic opacity-60">
             {`This document was last updated on ${new Intl.DateTimeFormat(undefined, {
             year: 'numeric', 

@@ -66,6 +66,7 @@ export type Page = {
   bodySummary: string;
   sidebar: Sidebar;
   seo: SEO;
+  properties: { [id: string]: any };
   createdAt: string;
   updatedAt: string;
   isHidden?: boolean;
@@ -432,4 +433,95 @@ export type UmbracoFormsResponse = {
   status: number,
   title: string,
   errors?: { [id: string]: string[] }
+}
+
+export type UmbracoFormPickerValue = {
+  id: string,
+  form?: UmbracoForm
+}
+
+export type UmbracoForm = {
+  id: string,
+  name: string,
+  indicator: string,
+  cssClass?: string,
+  nextLabel: string,
+  previousLabel: string,
+  submitLabel: string,
+  disableDefaultStylesheet: boolean,
+  fieldIndicationType: string,
+  hideFieldValidation: boolean,
+  messageOnSubmit: string,
+  messageOnSubmitIsHtml: boolean,
+  showValidationSummary: boolean,
+  gotoPageOnSubmit?: string,
+  gotoPageOnSubmitRoute?: UmbracoRoute,
+  pages: UmbracoFormPage[]
+}
+
+export type UmbracoFormPage = {
+  caption: string,
+  condition: UmbracoFormCondition,
+  fieldsets: UmbracoFormFieldset[]
+}
+
+export type UmbracoFormFieldset = {
+  id: string,
+  caption: string,
+  columns: UmbracoFormColumn[]
+}
+
+export type UmbracoFormColumn = {
+  caption: string,
+  width: number,
+  fields: UmbracoFormField[]
+}
+
+export type UmbracoFormField = {
+  id: string,
+  caption: string,
+  helpText: string,
+  placeholder: string,
+  cssClass?: string,
+  alias: string,
+  required: boolean,
+  requiredErrorMessage?: string,
+  pattern?: string,
+  patternInvalidErrorMessage?: string,
+  condition?: UmbracoFormCondition,
+  fileUploadOptions?: UmbracoFormFileUploadOptions, 
+  preValues: UmbracoFormFieldPreValue[],
+  settings: { [id: string]: any }
+  type: UmbracoFormFieldType
+}
+
+export type UmbracoFormFieldPreValue = {
+  value: string,
+  caption: string
+}
+
+export type UmbracoFormFieldType = {
+  id: string,
+  name: string,
+  supportsPreValues: boolean,
+  supportsUploadTypes: boolean,
+  renderInputType: string
+}
+
+export type UmbracoFormFileUploadOptions = {
+  allowAllUploadExtensions: boolean,​
+  allowedUploadExtensions: string[],
+  allowMultipleFileUploads: boolean
+}
+
+export type UmbracoFormCondition = {
+  actionType: 'Show' | 'Hide',​
+  logicType: 'All' | 'Any',​
+  rules: UmbracoFormConditionRule[]
+}
+
+export type UmbracoFormConditionRule = {
+  field: string,​
+  operator: string,​
+  value: string
 }
