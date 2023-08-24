@@ -41,7 +41,7 @@ export default async function HomePage({
       asideStyle={'NARROW'}
       aside={
         <Headline
-          title="Get your swag on"
+          title="Umbraco Headless Demo"
           description="With this demo store you are sure to loose your head over all the umbmazing headless features we have on offer 😉"
         />
       }
