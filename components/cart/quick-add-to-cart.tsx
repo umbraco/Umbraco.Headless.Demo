@@ -41,7 +41,7 @@ export default function QuickAddToCart({ product }: { product: Product }) {
             type="button"
             className={clsx('btn btn-lg relative z-10 col-span-2 outline-umb-blue', {
               'bg-umb-blue text-white hover:bg-umb-green': availableForSale,
-              'cursor-not-allowed bg-stb-15 text-gray-400 line-through': !availableForSale
+              'cursor-not-allowed bg-stb-15 text-gray-700 line-through': !availableForSale
             })}
             onClick={() => setIsOpen(true)}
           >
