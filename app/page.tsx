@@ -48,9 +48,9 @@ export default async function HomePage({
     >
       {products.length > 0 ? (
         <Grid>
-          {products.map((product: Product) => (
+          {products.map((product: Product, idx: number) => (
             <Grid.Item key={product.id}>
-              <ProductGridTile product={product} />
+              <ProductGridTile product={product} gridIndex={idx} />
             </Grid.Item>
           ))}
         </Grid>

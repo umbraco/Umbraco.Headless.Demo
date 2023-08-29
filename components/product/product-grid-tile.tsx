@@ -7,10 +7,12 @@ import Link from 'next/link';
 
 export default function ProductGridTile({
   product,
+  gridIndex,
   labels,
   ...props
 }: {
   product: Product,
+  gridIndex: number,
   labels?: {
     title: string;
     amount: string;
@@ -28,7 +30,8 @@ export default function ProductGridTile({
                   src={product.featuredImage?.url}
                   alt={product.title}
                   width="800"
-                  height="800" /> 
+                  height="800"
+                  priority={ gridIndex < 3 } /> 
               </picture>
             }
         </div>
