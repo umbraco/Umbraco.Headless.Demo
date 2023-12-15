@@ -33,7 +33,7 @@ jobs:
               -ResourceGroupName "${{ parameters.resourceGroupName }}" `
               -ServerName "${{ parameters.sqlServerName }}" `
               -DatabaseName "${{ parameters.databaseName }}" `
-              -RequestedServiceObjectiveName "S0" `
+              -RequestedServiceObjectiveName "Basic" `
               -Edition "Basic"
 
             Write-Host "Import database from .bacpac"
@@ -46,7 +46,7 @@ jobs:
               -StorageKey "$env:STORAGE_ACCESS_KEY" `
               -StorageUri "$env:DB_BACPAC_URL" `
               -Edition "Basic" `
-              -ServiceObjectiveName "S0" `
+              -ServiceObjectiveName "Basic" `
               -AdministratorLogin "$env:DATABASE_ADMIN" `
               -AdministratorLoginPassword "$env:DATABASE_PASSWORD"
           azurePowerShellVersion: 'LatestVersion'
