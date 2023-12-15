@@ -1,8 +1,9 @@
 parameters:
   - name: jobName
-    type: string
   - name: environment # dev/live
-    type: string
+  - name: azureSubscription
+  - name: resourceGroupName
+  - name: databaseName
 
 jobs:
   - job: ${{ parameters.jobName }}
@@ -11,7 +12,7 @@ jobs:
       - task: AzureAppServiceManage@0
         displayName: "Stop App Service"
         inputs:
-          azureSubscription:  ${{ parameters.azureSubscription }}
+          azureSubscription: ${{ parameters.azureSubscription }}
           Action: "Stop Azure App Service"
           WebAppName: "azapp-${{ parameters.environment }}-demos-headless-demo-umbraco"
 
@@ -19,7 +20,7 @@ jobs:
         name: ExportAzureServiceConnectionCredentials
         displayName: "Export Service Connection Credentials"
         inputs:
-          azureSubscription:  ${{ parameters.azureSubscription }}
+          azureSubscription: ${{ parameters.azureSubscription }}
           scriptType: pscore
           scriptLocation: inlineScript
           addSpnToEnvironment: true
