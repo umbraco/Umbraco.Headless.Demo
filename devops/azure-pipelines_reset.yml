@@ -16,6 +16,7 @@ jobs:
       environment: dev
       azureSubscription: Infra-dev-global-Demos
       resourceGroupName: rg-dev-global-demos
+      sqlServerName: sqlsrv-dev-demos-headless-demo
       databaseName: sqldb-dev-demos-headless-demo
 
   # - template: ./jobs/reset-site.template.yml

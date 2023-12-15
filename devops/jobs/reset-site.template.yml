@@ -4,6 +4,7 @@ parameters:
   - name: azureSubscription
   - name: resourceGroupName
   - name: databaseName
+  - name: sqlServerName
 
 jobs:
   - job: ${{ parameters.jobName }}
@@ -24,13 +25,13 @@ jobs:
             Write-Host "Remove existing database"
             Remove-AzSqlDatabase `
               -ResourceGroupName "${{ parameters.resourceGroupName }}" `
-              -ServerName "${{ parameters.databaseName }}" `
+              -ServerName "${{ parameters.sqlServerName }}" `
               -DatabaseName "${{ parameters.databaseName }}"
             
             Write-Host "Create new empty database"
             New-AzSqlDatabase `
               -ResourceGroupName "${{ parameters.resourceGroupName }}" `
-              -ServerName "${{ parameters.databaseName }}" `
+              -ServerName "${{ parameters.sqlServerName }}" `
               -DatabaseName "${{ parameters.databaseName }}" `
               -RequestedServiceObjectiveName "S0" `
               -Edition "Standard"
@@ -38,7 +39,7 @@ jobs:
             Write-Host "Import database from .bacpac"
             New-AzSqlDatabaseImport `
               -ResourceGroupName "${{ parameters.resourceGroupName }}" `
-              -ServerName "${{ parameters.databaseName }}" `
+              -ServerName "${{ parameters.sqlServerName }}" `
               -DatabaseName "${{ parameters.databaseName }}" `
               -DatabaseMaxSizeBytes "database-size-in-bytes" `
               -StorageKeyType "StorageAccessKey" `
