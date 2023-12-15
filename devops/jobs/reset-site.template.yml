@@ -1,0 +1,31 @@
+parameters:
+  - name: jobName
+    type: string
+  - name: environment # dev/live
+    type: string
+
+jobs:
+- job: ${{ parameters.jobName }}
+  displayName: Reset ${{ parameters.environment }}
+  steps:
+    - task: AzureAppServiceManage@0
+      displayName: 'Stop App Service'
+      inputs:
+        azureSubscription: 'Infra-${{ parameters.environment }}-global-Demos'
+        Action: 'Stop Azure App Service'
+        WebAppName: 'azapp-${{ parameters.environment }}-demos-headless-demo-umbraco'
+    
+    - task: PowerShell@2
+      displayName: 'Restore database'
+      inputs:
+        targetType: 'inline'
+        script: |
+          # Write your PowerShell commands here.
+          
+          Write-Host "Hello World"
+    - task: AzureAppServiceManage@0
+      displayName: 'Stop App Service'
+      inputs:
+        azureSubscription: 'Infra-${{ parameters.environment }}-global-Demos'
+        Action: 'Start Azure App Service'
+        WebAppName: 'azapp-${{ parameters.environment }}-demos-headless-demo-umbraco'
