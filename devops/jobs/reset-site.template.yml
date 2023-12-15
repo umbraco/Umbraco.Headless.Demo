@@ -37,29 +37,33 @@ jobs:
           ScriptType: "InlineScript"
           Inline: |
             Write-Host "Remove existing database"
-            Remove-AzSqlDatabase -ResourceGroupName "${{ parameters.resourceGroupName }}" `
-                                  -ServerName "${{ parameters.databaseName }}" `
-                                  -DatabaseName "${{ parameters.databaseName }}"
+            Remove-AzSqlDatabase `
+              -ResourceGroupName "${{ parameters.resourceGroupName }}" `
+              -ServerName "${{ parameters.databaseName }}" `
+              -DatabaseName "${{ parameters.databaseName }}"
             
             Write-Host "Create new empty database"
-            $database = New-AzSqlDatabase -ResourceGroupName "${{ parameters.resourceGroupName }}" `
-                          -ServerName "${{ parameters.databaseName }}"" `
-                          -DatabaseName "${{ parameters.databaseName }}" `
-                          -RequestedServiceObjectiveName "S0" `
-                          -Edition "Standard"
-            
+            New-AzSqlDatabase `
+              -ResourceGroupName "${{ parameters.resourceGroupName }}" `
+              -ServerName "${{ parameters.databaseName }}"" `
+              -DatabaseName "${{ parameters.databaseName }}" `
+              -RequestedServiceObjectiveName "S0" `
+              -Edition "Standard"
+
             Write-Host "Import database from .bacpac"
-            $importRequest = New-AzSqlDatabaseImport -ResourceGroupName "${{ parameters.resourceGroupName }}" `
-                    -ServerName "${{ parameters.databaseName }}"" `
-                    -DatabaseName "${{ parameters.databaseName }}"" `
-                    -DatabaseMaxSizeBytes "database-size-in-bytes" `
-                    -StorageKeyType "StorageAccessKey" `
-                    -StorageKey "$env:STORAGE_ACCESS_KEY" `
-                    -StorageUri "${env:DB_BACPAC_URL}" `
-                    -Edition "Standard" `
-                    -ServiceObjectiveName "S0" `
-                    -AdministratorLogin "$env:DATABASE_ADMIN" `
-                    -AdministratorLoginPassword "$env:DATABASE_PASSWORD"
+            New-AzSqlDatabaseImport `
+              -ResourceGroupName "${{ parameters.resourceGroupName }}" `
+              -ServerName "${{ parameters.databaseName }}" `
+              -DatabaseName "${{ parameters.databaseName }}" `
+              -DatabaseMaxSizeBytes "database-size-in-bytes" `
+              -StorageKeyType "StorageAccessKey" `
+              -StorageKey "$env:STORAGE_ACCESS_KEY" `
+              -StorageUri "$env:DB_BACPAC_URL" `
+              -Edition "Standard" `
+              -ServiceObjectiveName "S0" `
+              -AdministratorLogin "$env:DATABASE_ADMIN" `
+              -AdministratorLoginPassword "$env:DATABASE_PASSWORD"
+
           preferredAzurePowerShellVersion: "5"
         env:
           STORAGE_ACCESS_KEY: $(SECRET_STORAGE_ACCESS_KEY)
