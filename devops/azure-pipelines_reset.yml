@@ -15,7 +15,7 @@ jobs:
       jobName: reset_dev
       environment: dev
 
-  - template: ./jobs/reset-site.template.yml
-    parameters:
-      jobName: reset_live
-      environment: live
+  # - template: ./jobs/reset-site.template.yml
+  #   parameters:
+  #     jobName: reset_live
+  #     environment: live
