@@ -30,7 +30,7 @@ jobs:
             Write-Host "Create new empty database"
             New-AzSqlDatabase `
               -ResourceGroupName "${{ parameters.resourceGroupName }}" `
-              -ServerName "${{ parameters.databaseName }}"" `
+              -ServerName "${{ parameters.databaseName }}" `
               -DatabaseName "${{ parameters.databaseName }}" `
               -RequestedServiceObjectiveName "S0" `
               -Edition "Standard"
@@ -49,7 +49,7 @@ jobs:
               -AdministratorLogin "$env:DATABASE_ADMIN" `
               -AdministratorLoginPassword "$env:DATABASE_PASSWORD"
 
-          preferredAzurePowerShellVersion: "5"
+          azurePowerShellVersion: 'LatestVersion'
         env:
           STORAGE_ACCESS_KEY: $(SECRET_STORAGE_ACCESS_KEY)
           DATABASE_ADMIN: $(SECRET_DATABASE_ADMIN)
