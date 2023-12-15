@@ -18,17 +18,19 @@ jobs:
           WebAppName: "azapp-${{ parameters.environment }}-demos-headless-demo-umbraco"
 
       - task: AzurePowerShell@5
+        displayName: "Reset database from a backup"
         inputs:
           azureSubscription:  ${{ parameters.azureSubscription }}
           ScriptType: "InlineScript"
           Inline: |
-            Write-Host "Remove existing database"
+            Write-Host "Remove the existing database"
             Remove-AzSqlDatabase `
               -ResourceGroupName "${{ parameters.resourceGroupName }}" `
               -ServerName "${{ parameters.sqlServerName }}" `
               -DatabaseName "${{ parameters.databaseName }}"
+            Write-Host "Database removal complete"
             
-            Write-Host "Create new empty database"
+            Write-Host "Create a new empty database"
             New-AzSqlDatabase `
               -ResourceGroupName "${{ parameters.resourceGroupName }}" `
               -ServerName "${{ parameters.sqlServerName }}" `
@@ -37,7 +39,7 @@ jobs:
               -Edition "Basic"
 
             Write-Host "Import database from .bacpac"
-            New-AzSqlDatabaseImport `
+            $importRequest = New-AzSqlDatabaseImport `
               -ResourceGroupName "${{ parameters.resourceGroupName }}" `
               -ServerName "${{ parameters.sqlServerName }}" `
               -DatabaseName "${{ parameters.databaseName }}" `
@@ -49,7 +51,22 @@ jobs:
               -ServiceObjectiveName "Basic" `
               -AdministratorLogin "$env:DATABASE_ADMIN" `
               -AdministratorLoginPassword (ConvertTo-SecureString -String "$env:DATABASE_PASSWORD" -AsPlainText -Force)
-          azurePowerShellVersion: 'LatestVersion'
+            
+            # Wait for the import to complete
+            do {
+                Start-Sleep -Seconds 10
+                $status = Get-AzSqlDatabaseImportExportStatus -OperationStatusLink $importRequest.OperationStatusLink
+                Write-Host "Import status: $($status.Status)"
+            } while ($status.Status -eq "InProgress" -or $status.Status -eq "Pending")
+
+            # Check if the import was successful
+            if ($status.Status -eq "Succeeded") {
+                Write-Host "Database import succeeded"
+            } else {
+                Write-Host "Database import failed"
+                Write-Host "Error: $($status.ErrorMessage)"
+            }
+          preferredAzurePowerShellVersion: '11.1.0.'
         env:
           STORAGE_ACCESS_KEY: $(SECRET_STORAGE_ACCESS_KEY)
           DATABASE_ADMIN: $(SECRET_DATABASE_ADMIN)
