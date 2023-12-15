@@ -1,0 +1,79 @@
+trigger:
+  batch: true
+  branches:
+    include:
+      - backend/dev
+      - backend/main
+      - backend/feature/*
+      - backend/hotfix/*
+      - backend/support/*
+  paths:
+    exclude:
+      - README.md
+
+pr:
+  autoCancel: true
+  drafts: false
+  branches:
+    include:
+      - backend/dev
+      - backend/main
+      - backend/feature/*
+      - backend/hotfix/*
+      - backend/support/*
+
+schedules:
+- cron: '0 0 * * *'
+  displayName: Daily midnight build
+  branches:
+    include:
+    - backend/main
+
+pool:
+  vmImage: 'windows-latest'
+
+variables:
+  projectsRoot: 'src/'
+  umbracoProjectName: 'Umbraco.Headless.Demo.Web'
+  buildConfiguration: 'Release'
+  boundedContext: 'demos'
+  serviceName: 'headless-demo'
+  terraformVersion: 1.1.7
+  serviceVariableGroupFormat: '{0}-global-{1}' # '{boundedContext}-global-{environment}'
+  serviceConnectionNameFormat: 'Infra-{0}-global-{1}' # 'Infra-{environment}-global-{boundedContext}'
+
+stages:
+  # 1. Build
+  - template: stages/build.yml
+    parameters:
+      projectsRoot: ${{ variables.projectsRoot }}
+      umbracoProjectName: ${{ variables.umbracoProjectName }}
+      buildConfiguration: ${{ variables.buildConfiguration }}
+
+  # 2. Stage: Deploy To Azure 
+  - ${{ if ne(variables['Build.Reason'], 'Schedule') }}: # Don't deploy to dev if on a schedule
+    - template: stages/deploy.yml
+      parameters:
+        umbracoProjectName: ${{ variables.umbracoProjectName }}
+        environment: dev
+        environmentName: Development
+        nextEnvironment: live
+        boundedContext: ${{ variables.boundedContext }}
+        serviceName: ${{ variables.serviceName }}
+        terraformVersion: ${{ variables.terraformVersion }}
+        serviceVariableGroup: '${{ variables.boundedContext }}-global-dev' # ${{ format(variables.serviceVariableGroupFormat, variables.boundedContext, 'dev') }}
+        nextServiceVariableGroup: '${{ variables.boundedContext }}-global-live' # ${{ format(variables.nextServiceVariableGroupFormat, variables.boundedContext, 'live') }}
+        serviceConnectionName: 'Infra-dev-global-${{ variables.boundedContext }}' # ${{ format(variables.nextServiceVariableGroupFormat, 'dev', variables.boundedContext) }}
+        nextServiceConnectionName: 'Infra-live-global-${{ variables.boundedContext }}' # ${{ format(variables.nextServiceVariableGroupFormat, 'live', variables.boundedContext) }}
+
+  - ${{ if contains(variables['Build.SourceBranch'], 'backend/main') }}: # Have to use this syntax as condition is not supported on templates: https://github.com/microsoft/azure-pipelines-yaml/issues/30
+    - template: stages/deploy.yml
+      parameters:
+        umbracoProjectName: ${{ variables.umbracoProjectName }}
+        environment: live
+        environmentName: Live
+        boundedContext: ${{ variables.boundedContext }}
+        serviceName: ${{ variables.serviceName }}
+        terraformVersion: ${{ variables.terraformVersion }}
+        serviceVariableGroup: '${{ variables.boundedContext }}-global-live' # ${{ format(variables.serviceVariableGroupFormat, variables.boundedContext, 'live') }}
+        serviceConnectionName: 'Infra-live-global-${{ variables.boundedContext }}' # ${{ format(variables.nextServiceVariableGroupFormat, 'live', variables.boundedContext) }}
