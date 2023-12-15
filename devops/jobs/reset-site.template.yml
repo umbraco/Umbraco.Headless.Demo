@@ -4,11 +4,6 @@ parameters:
   - name: environment # dev/live
     type: string
 
-variables:
-  azureSubscription: Infra-${{ parameters.environment }}-global-Demos
-  resourceGroupName: rg-${{ parameters.environment }}-global-demos
-  databaseName: sqldb-${{ parameters.environment }}-demos-headless-demo
-
 jobs:
   - job: ${{ parameters.jobName }}
     displayName: Reset ${{ parameters.environment }}
@@ -16,7 +11,7 @@ jobs:
       - task: AzureAppServiceManage@0
         displayName: "Stop App Service"
         inputs:
-          azureSubscription:  ${{ variables.azureSubscription }}
+          azureSubscription:  ${{ parameters.azureSubscription }}
           Action: "Stop Azure App Service"
           WebAppName: "azapp-${{ parameters.environment }}-demos-headless-demo-umbraco"
 
@@ -24,7 +19,7 @@ jobs:
         name: ExportAzureServiceConnectionCredentials
         displayName: "Export Service Connection Credentials"
         inputs:
-          azureSubscription:  ${{ variables.azureSubscription }}
+          azureSubscription:  ${{ parameters.azureSubscription }}
           scriptType: pscore
           scriptLocation: inlineScript
           addSpnToEnvironment: true
@@ -37,25 +32,25 @@ jobs:
       
       - task: AzurePowerShell@5
         inputs:
-          azureSubscription:  ${{ variables.azureSubscription }}
+          azureSubscription:  ${{ parameters.azureSubscription }}
           ScriptType: "InlineScript"
           Inline: |
             Write-Host "Remove existing database"
-            Remove-AzSqlDatabase -ResourceGroupName "${{ variables.resourceGroupName }}" `
-                                  -ServerName "${{ variables.databaseName }}" `
-                                  -DatabaseName "${{ variables.databaseName }}"
+            Remove-AzSqlDatabase -ResourceGroupName "${{ parameters.resourceGroupName }}" `
+                                  -ServerName "${{ parameters.databaseName }}" `
+                                  -DatabaseName "${{ parameters.databaseName }}"
             
             Write-Host "Create new empty database"
-            $database = New-AzSqlDatabase -ResourceGroupName "${{ variables.resourceGroupName }}" `
-                          -ServerName "${{ variables.databaseName }}"" `
-                          -DatabaseName "${{ variables.databaseName }}" `
+            $database = New-AzSqlDatabase -ResourceGroupName "${{ parameters.resourceGroupName }}" `
+                          -ServerName "${{ parameters.databaseName }}"" `
+                          -DatabaseName "${{ parameters.databaseName }}" `
                           -RequestedServiceObjectiveName "S0" `
                           -Edition "Standard"
             
             Write-Host "Import database from .bacpac"
-            $importRequest = New-AzSqlDatabaseImport -ResourceGroupName "${{ variables.resourceGroupName }}" `
-                    -ServerName "${{ variables.databaseName }}"" `
-                    -DatabaseName "${{ variables.databaseName }}"" `
+            $importRequest = New-AzSqlDatabaseImport -ResourceGroupName "${{ parameters.resourceGroupName }}" `
+                    -ServerName "${{ parameters.databaseName }}"" `
+                    -DatabaseName "${{ parameters.databaseName }}"" `
                     -DatabaseMaxSizeBytes "database-size-in-bytes" `
                     -StorageKeyType "StorageAccessKey" `
                     -StorageKey "$env:STORAGE_ACCESS_KEY" `
@@ -73,6 +68,6 @@ jobs:
       - task: AzureAppServiceManage@0
         displayName: "Start App Service"
         inputs:
-          azureSubscription:  ${{ variables.azureSubscription }}
+          azureSubscription:  ${{ parameters.azureSubscription }}
           Action: "Start Azure App Service"
           WebAppName: "azapp-${{ parameters.environment }}-demos-headless-demo-umbraco"

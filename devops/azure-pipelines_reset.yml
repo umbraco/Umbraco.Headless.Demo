@@ -1,19 +1,22 @@
 trigger: none
 
-schedules:
-- cron: '0 0 * * *'
-  displayName: Daily midnight build
-  always: true
-  branches:
-    include:
-    - backend/main
-    - backend/dev
-
+# schedules:
+# - cron: '0 0 * * *'
+#   displayName: Daily midnight build
+#   always: true
+#   branches:
+#     include:
+#     - backend/main
+#     - backend/dev
+  
 jobs:
   - template: ./jobs/reset-site.template.yml
     parameters:
       jobName: reset_dev
       environment: dev
+      azureSubscription: Infra-dev-global-Demos
+      resourceGroupName: rg-dev-global-demos
+      databaseName: sqldb-dev-demos-headless-demo
 
   # - template: ./jobs/reset-site.template.yml
   #   parameters:
