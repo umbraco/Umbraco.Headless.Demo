@@ -30,7 +30,7 @@ jobs:
             Write-Host "Create new empty database"
             New-AzSqlDatabase `
               -ResourceGroupName "${{ parameters.resourceGroupName }}" `
-              -ServerName "${{ parameters.databaseName }}"" `
+              -ServerName "${{ parameters.databaseName }}" `
               -DatabaseName "${{ parameters.databaseName }}" `
               -RequestedServiceObjectiveName "S0" `
               -Edition "Standard"
