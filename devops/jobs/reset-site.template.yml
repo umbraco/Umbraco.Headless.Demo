@@ -16,21 +16,6 @@ jobs:
           Action: "Stop Azure App Service"
           WebAppName: "azapp-${{ parameters.environment }}-demos-headless-demo-umbraco"
 
-      - task: AzureCLI@2
-        name: ExportAzureServiceConnectionCredentials
-        displayName: "Export Service Connection Credentials"
-        inputs:
-          azureSubscription: ${{ parameters.azureSubscription }}
-          scriptType: pscore
-          scriptLocation: inlineScript
-          addSpnToEnvironment: true
-          inlineScript: |
-            $SUBSCRIPTION_ID = az account show --query "id" --output tsv
-            Write-Host "##vso[task.setvariable variable=tenant_id]$env:tenantId"
-            Write-Host "##vso[task.setvariable variable=subscription_id]$SUBSCRIPTION_ID"
-            Write-Host "##vso[task.setvariable variable=client_id]$env:servicePrincipalId"
-            Write-Host "##vso[task.setvariable variable=client_secret]$env:servicePrincipalKey"
-      
       - task: AzurePowerShell@5
         inputs:
           azureSubscription:  ${{ parameters.azureSubscription }}
