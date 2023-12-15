@@ -48,7 +48,6 @@ jobs:
               -ServiceObjectiveName "S0" `
               -AdministratorLogin "$env:DATABASE_ADMIN" `
               -AdministratorLoginPassword "$env:DATABASE_PASSWORD"
-
           azurePowerShellVersion: 'LatestVersion'
         env:
           STORAGE_ACCESS_KEY: $(SECRET_STORAGE_ACCESS_KEY)
