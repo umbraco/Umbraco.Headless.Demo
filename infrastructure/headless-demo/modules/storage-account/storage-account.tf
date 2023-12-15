@@ -58,7 +58,7 @@ resource "azurerm_storage_account" "sa" {
   resource_group_name       = var.resource_group_name
   account_tier              = "Standard"
   account_replication_type  = "ZRS"
-  access_tier               = "Hot"
+  access_tier               = "Cool"
   min_tls_version           = "TLS1_2"
   account_kind              = "StorageV2"
   enable_https_traffic_only = true
