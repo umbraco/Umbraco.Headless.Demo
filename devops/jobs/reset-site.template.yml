@@ -41,7 +41,7 @@ jobs:
               -ResourceGroupName "${{ parameters.resourceGroupName }}" `
               -ServerName "${{ parameters.sqlServerName }}" `
               -DatabaseName "${{ parameters.databaseName }}" `
-              -DatabaseMaxSizeBytes "database-size-in-bytes" `
+              -DatabaseMaxSizeBytes "1000000000" `
               -StorageKeyType "StorageAccessKey" `
               -StorageKey "$env:STORAGE_ACCESS_KEY" `
               -StorageUri "$env:DB_BACPAC_URL" `
