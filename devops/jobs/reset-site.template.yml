@@ -48,7 +48,7 @@ jobs:
               -Edition "Basic" `
               -ServiceObjectiveName "Basic" `
               -AdministratorLogin "$env:DATABASE_ADMIN" `
-              -AdministratorLoginPassword "$env:DATABASE_PASSWORD"
+              -AdministratorLoginPassword (ConvertTo-SecureString -String "$env:DATABASE_PASSWORD" -AsPlainText -Force)
           azurePowerShellVersion: 'LatestVersion'
         env:
           STORAGE_ACCESS_KEY: $(SECRET_STORAGE_ACCESS_KEY)
