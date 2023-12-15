@@ -34,7 +34,7 @@ jobs:
               -ServerName "${{ parameters.sqlServerName }}" `
               -DatabaseName "${{ parameters.databaseName }}" `
               -RequestedServiceObjectiveName "S0" `
-              -Edition "Standard"
+              -Edition "Basic"
 
             Write-Host "Import database from .bacpac"
             New-AzSqlDatabaseImport `
@@ -45,7 +45,7 @@ jobs:
               -StorageKeyType "StorageAccessKey" `
               -StorageKey "$env:STORAGE_ACCESS_KEY" `
               -StorageUri "$env:DB_BACPAC_URL" `
-              -Edition "Standard" `
+              -Edition "Basic" `
               -ServiceObjectiveName "S0" `
               -AdministratorLogin "$env:DATABASE_ADMIN" `
               -AdministratorLoginPassword "$env:DATABASE_PASSWORD"
