@@ -9,18 +9,28 @@ trigger: none
 #     - backend/main
 #     - backend/dev
   
-jobs:
-  - template: ./jobs/reset-site.template.yml
-    parameters:
-      environment: dev
-      environmentName: Development
-      azureSubscription: Infra-dev-global-Demos
-      resourceGroupName: rg-dev-global-demos
-      sqlServerName: sqlsrv-dev-demos-headless-demo
-      databaseName: sqldb-dev-demos-headless-demo
+stages:
+  - stage: reset_dev
+    displayName: "Reset Dev"
+    jobs:
+    - template: ./jobs/reset-site.template.yml
+      parameters:
+        environment: dev
+        environmentName: Development
+        azureSubscription: Infra-dev-global-Demos
+        resourceGroupName: rg-dev-global-demos
+        sqlServerName: sqlsrv-dev-demos-headless-demo
+        databaseName: sqldb-dev-demos-headless-demo
 
-  # - template: ./jobs/reset-site.template.yml
-  #   parameters:
-  #     jobName: reset_live
-  #     environmentName: Live
-  #     environment: live
+  - stage: reset_live
+    displayName: "Reset Live"
+    jobs:
+    - template: ./jobs/reset-site.template.yml
+      parameters:
+        environment: live
+        environmentName: Live
+        azureSubscription: Infra-live-global-Demos
+        resourceGroupName: rg-live-global-demos
+        sqlServerName: sqlsrv-live-demos-headless-demo
+        databaseName: sqldb-live-demos-headless-demo
+    
