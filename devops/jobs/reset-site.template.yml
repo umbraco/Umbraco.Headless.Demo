@@ -24,7 +24,7 @@ jobs:
         inputs:
           azureSubscription: ${{ parameters.azureSubscription }}
           Action: "Stop Azure App Service"
-          WebAppName: "azapp-${{ parameters.environment }}-demos-headless-demo-umbraco"
+          WebAppName: "azapp-${{ parameters.environment }}-demos-${{ parameters.serviceName }}-umbraco"
 
       - task: AzurePowerShell@5
         displayName: "Remove database - ${{ parameters.environment }}"
@@ -38,15 +38,6 @@ jobs:
               -ServerName "${{ parameters.sqlServerName }}" `
               -DatabaseName "${{ parameters.databaseName }}"
             Write-Host "Database removal complete"
-            
-            Write-Host "Create a new empty database"
-            $oneGBInBytes = 1 * 1024 * 1024 * 1024  # 2 * 1 GB (in bytes)
-            $common_azure_tags = @{
-              environment = var.environment
-              region      = "global"
-              source      = "Umbraco.Headless.Demo/infrastructure/headless-demo"
-              cost_center = "Development - Integrations"
-            }
           preferredAzurePowerShellVersion: 11.1.0
 
   # Provision infrastructure to recreate the sql database
@@ -54,10 +45,9 @@ jobs:
     parameters:
       environment: ${{ parameters.environment }}
       environment_name: ${{ parameters.environmentName }}
-      bounded_context: ${{ parameters.boundedContext }}
       working_directory: "$(Build.Repository.LocalPath)/infrastructure/${{ lower(parameters.serviceName) }}"
       tf_version: ${{ parameters.terraformVersion }}
-      service_variable_group: ${{ parameters.resourceGroupName }}
+      service_variable_group: "${{ parameters.boundedContext }}-global-${{ parameters.environment }}"
       service_connection_name: ${{ parameters.azureSubscription }}
 
   - job: import_db_${{ parameters.environment }}
@@ -108,4 +98,4 @@ jobs:
       inputs:
         azureSubscription:  ${{ parameters.azureSubscription }}
         Action: "Start Azure App Service"
-        WebAppName: "azapp-${{ parameters.environment }}-demos-headless-demo-umbraco"
+        WebAppName: "azapp-${{ parameters.environment }}-demos-${{ parameters.serviceName }}-umbraco"
