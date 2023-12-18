@@ -49,14 +49,12 @@ jobs:
       tf_version: ${{ parameters.terraformVersion }}
       service_variable_group: "${{ parameters.boundedContext }}-global-${{ parameters.environment }}"
       service_connection_name: ${{ parameters.azureSubscription }}
-      dependsOn:
-        - remove_old_db_${{ parameters.environment }}
+      paramDependsOn: remove_old_db_${{ parameters.environment }}
 
 
   - job: import_db_${{ parameters.environment }}
     displayName: "Import db - ${{ parameters.environment }}"
-    dependsOn:
-      - provisioning_infrastructure
+    dependsOn: provisioning_infrastructure
     steps:
     - task: AzurePowerShell@5
       displayName: "Import database from a backup - ${{ parameters.environment }}"

@@ -5,14 +5,13 @@ parameters:
   - name: tf_version
   - name: service_variable_group
   - name: service_connection_name
-  - name: dependsOn
+  - name: paramDependsOn
     default: []
-
 jobs:
   - deployment: provisioning_infrastructure
     displayName: Provision infrastructure - ${{ parameters.environment }}
     environment: ${{ parameters.environment_name }}
-    dependsOn: ${{ parameters.dependsOn }}
+    dependsOn: ${{ parameters.paramDependsOn }}
     continueOnError: false
     variables:
       - group: ${{ parameters.service_variable_group }}
