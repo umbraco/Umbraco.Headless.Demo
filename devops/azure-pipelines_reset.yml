@@ -24,6 +24,7 @@ stages:
 
   - stage: reset_live
     displayName: "Reset Live"
+    dependsOn: []
     jobs:
     - template: ./jobs/reset-site.template.yml
       parameters:
