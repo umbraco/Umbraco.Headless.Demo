@@ -1,14 +1,23 @@
 parameters:
-  - name: jobName
   - name: environment # dev/live
+  - name: environmentName
   - name: azureSubscription
   - name: resourceGroupName
   - name: databaseName
   - name: sqlServerName
+  - name: boundedContext
+    type: string
+    default: 'demos'
+  - name: serviceName
+    type: string
+    default: 'headless-demo'
+  - name: terraformVersion
+    type: string
+    default: 1.1.7
 
 jobs:
-  - job: ${{ parameters.jobName }}
-    displayName: Reset ${{ parameters.environment }}
+  - job: remove_old_db_${{ parameters.environment }}
+    displayName: "Remove old database - ${{ parameters.environment }}"
     steps:
       - task: AzureAppServiceManage@0
         displayName: "Stop App Service"
@@ -18,7 +27,7 @@ jobs:
           WebAppName: "azapp-${{ parameters.environment }}-demos-headless-demo-umbraco"
 
       - task: AzurePowerShell@5
-        displayName: "Reset database from a backup"
+        displayName: "Remove database - ${{ parameters.environment }}"
         inputs:
           azureSubscription:  ${{ parameters.azureSubscription }}
           ScriptType: "InlineScript"
@@ -31,50 +40,72 @@ jobs:
             Write-Host "Database removal complete"
             
             Write-Host "Create a new empty database"
-            New-AzSqlDatabase `
-              -ResourceGroupName "${{ parameters.resourceGroupName }}" `
-              -ServerName "${{ parameters.sqlServerName }}" `
-              -DatabaseName "${{ parameters.databaseName }}" `
-              -RequestedServiceObjectiveName "Basic" `
-              -Edition "Basic"
-
-            Write-Host "Import database from .bacpac"
-            $importRequest = New-AzSqlDatabaseImport `
-              -ResourceGroupName "${{ parameters.resourceGroupName }}" `
-              -ServerName "${{ parameters.sqlServerName }}" `
-              -DatabaseName "${{ parameters.databaseName }}" `
-              -DatabaseMaxSizeBytes "1000000000" `
-              -StorageKeyType "StorageAccessKey" `
-              -StorageKey "$env:STORAGE_ACCESS_KEY" `
-              -StorageUri "$env:DB_BACPAC_URL" `
-              -Edition "Basic" `
-              -ServiceObjectiveName "Basic" `
-              -AdministratorLogin "$env:DATABASE_ADMIN" `
-              -AdministratorLoginPassword (ConvertTo-SecureString -String "$env:DATABASE_PASSWORD" -AsPlainText -Force)
-            
-            # Wait for the import to complete
-            do {
-                Start-Sleep -Seconds 10
-                $status = Get-AzSqlDatabaseImportExportStatus -OperationStatusLink $importRequest.OperationStatusLink
-                Write-Host "Import status: $($status.Status)"
-            } while ($status.Status -eq "InProgress" -or $status.Status -eq "Pending")
-
-            # Check if the import was successful
-            if ($status.Status -eq "Succeeded") {
-                Write-Host "Database import succeeded"
-            } else {
-                Write-Host "Database import failed"
-                Write-Host "Error: $($status.ErrorMessage)"
+            $oneGBInBytes = 1 * 1024 * 1024 * 1024  # 2 * 1 GB (in bytes)
+            $common_azure_tags = @{
+              environment = var.environment
+              region      = "global"
+              source      = "Umbraco.Headless.Demo/infrastructure/headless-demo"
+              cost_center = "Development - Integrations"
             }
           preferredAzurePowerShellVersion: 11.1.0
-        env:
-          STORAGE_ACCESS_KEY: $(SECRET_STORAGE_ACCESS_KEY)
-          DATABASE_ADMIN: $(SECRET_DATABASE_ADMIN)
-          DATABASE_PASSWORD: $(SECRET_DATABASE_PASSWORD)
 
-      - task: AzureAppServiceManage@0
-        displayName: "Start App Service"
-        inputs:
-          azureSubscription:  ${{ parameters.azureSubscription }}
-          Action: "Start Azure App Service"
-          WebAppName: "azapp-${{ parameters.environment }}-demos-headless-demo-umbraco"
+  # Provision infrastructure to recreate the sql database
+  - template: ./jobs/provision-infrastructure.yml
+    parameters:
+      environment: ${{ parameters.environment }}
+      environment_name: ${{ parameters.environmentName }}
+      bounded_context: ${{ parameters.boundedContext }}
+      working_directory: "$(Build.Repository.LocalPath)/infrastructure/${{ lower(parameters.serviceName) }}"
+      tf_version: ${{ parameters.terraformVersion }}
+      service_variable_group: ${{ parameters.resourceGroupName }}
+      service_connection_name: ${{ parameters.azureSubscription }}
+
+  - job: import_db_${{ parameters.environment }}
+    steps:
+    - task: AzurePowerShell@5
+      displayName: "Import database from a backup - ${{ parameters.environment }}"
+      inputs:
+        azureSubscription:  ${{ parameters.azureSubscription }}
+        ScriptType: "InlineScript"
+        Inline: |
+          Write-Host "Import database from .bacpac"
+          $oneGBInBytes = 1 * 1024 * 1024 * 1024
+          $importRequest = New-AzSqlDatabaseImport `
+            -ResourceGroupName "${{ parameters.resourceGroupName }}" `
+            -ServerName "${{ parameters.sqlServerName }}" `
+            -DatabaseName "${{ parameters.databaseName }}" `
+            -DatabaseMaxSizeBytes $oneGBInBytes `
+            -StorageKeyType "StorageAccessKey" `
+            -StorageKey "$env:STORAGE_ACCESS_KEY" `
+            -StorageUri "$env:DB_BACPAC_URL" `
+            -Edition "Basic" `
+            -ServiceObjectiveName "Basic" `
+            -AdministratorLogin "$env:DATABASE_ADMIN" `
+            -AdministratorLoginPassword (ConvertTo-SecureString -String "$env:DATABASE_PASSWORD" -AsPlainText -Force)
+          
+          # Wait for the import to complete
+          do {
+              Start-Sleep -Seconds 10
+              $status = Get-AzSqlDatabaseImportExportStatus -OperationStatusLink $importRequest.OperationStatusLink
+              Write-Host "Import status: $($status.Status)..."
+          } while ($status.Status -eq "InProgress" -or $status.Status -eq "Pending")
+
+          # Check if the import was successful
+          if ($status.Status -eq "Succeeded") {
+              Write-Host "Database import succeeded"
+          } else {
+              Write-Host "Database import failed"
+              Write-Host "Error: $($status.ErrorMessage)"
+          }
+        preferredAzurePowerShellVersion: 11.1.0
+      env:
+        STORAGE_ACCESS_KEY: $(SECRET_STORAGE_ACCESS_KEY)
+        DATABASE_ADMIN: $(SECRET_DATABASE_ADMIN)
+        DATABASE_PASSWORD: $(SECRET_DATABASE_PASSWORD)
+      
+    - task: AzureAppServiceManage@0
+      displayName: "Start App Service - ${{ parameters.environment }}"
+      inputs:
+        azureSubscription:  ${{ parameters.azureSubscription }}
+        Action: "Start Azure App Service"
+        WebAppName: "azapp-${{ parameters.environment }}-demos-headless-demo-umbraco"
