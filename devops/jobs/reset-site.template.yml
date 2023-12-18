@@ -50,7 +50,7 @@ jobs:
           preferredAzurePowerShellVersion: 11.1.0
 
   # Provision infrastructure to recreate the sql database
-  - template: ./jobs/provision-infrastructure.yml
+  - template: ./provision-infrastructure.yml
     parameters:
       environment: ${{ parameters.environment }}
       environment_name: ${{ parameters.environmentName }}
