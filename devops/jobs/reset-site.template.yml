@@ -55,6 +55,9 @@ jobs:
   - job: import_db_${{ parameters.environment }}
     displayName: "Import db - ${{ parameters.environment }}"
     dependsOn: provisioning_infrastructure
+    variables:
+      - group: "${{ parameters.boundedContext }}-global-${{ parameters.environment }}"
+
     steps:
     - task: AzurePowerShell@5
       displayName: "Import database from a backup - ${{ parameters.environment }}"
@@ -70,12 +73,12 @@ jobs:
             -DatabaseName "${{ parameters.databaseName }}" `
             -DatabaseMaxSizeBytes $oneGBInBytes `
             -StorageKeyType "StorageAccessKey" `
-            -StorageKey "$env:STORAGE_ACCESS_KEY" `
             -StorageUri "$env:DB_BACPAC_URL" `
             -Edition "Basic" `
             -ServiceObjectiveName "Basic" `
-            -AdministratorLogin "$env:DATABASE_ADMIN" `
-            -AdministratorLoginPassword (ConvertTo-SecureString -String "$env:DATABASE_PASSWORD" -AsPlainText -Force)
+            -StorageKey "$(variables.HEADLESS_SECRET_STORAGE_ACCESS_KEY)" `
+            -AdministratorLogin "$(variables.HEADLESS_SECRET_DATABASE_ADMIN)" `
+            -AdministratorLoginPassword (ConvertTo-SecureString -String "$(HEADLESS_SECRET_DATABASE_PASSWORD)" -AsPlainText -Force)
           
           # Wait for the import to complete
           do {
@@ -91,11 +94,7 @@ jobs:
               Write-Host "Database import failed"
               Write-Host "Error: $($status.ErrorMessage)"
           }
-        preferredAzurePowerShellVersion: 11.1.0
-      env:
-        STORAGE_ACCESS_KEY: $(SECRET_STORAGE_ACCESS_KEY)
-        DATABASE_ADMIN: $(SECRET_DATABASE_ADMIN)
-        DATABASE_PASSWORD: $(SECRET_DATABASE_PASSWORD)
+        preferredAzurePowerShellVersion: 11.1.0   
       
     - task: AzureAppServiceManage@0
       displayName: "Start App Service - ${{ parameters.environment }}"
