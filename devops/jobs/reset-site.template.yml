@@ -55,6 +55,7 @@ jobs:
   - job: import_db_${{ parameters.environment }}
     displayName: "Import db - ${{ parameters.environment }}"
     dependsOn: provisioning_infrastructure
+    condition: succeededOrFailed()
     variables:
       - group: "${{ parameters.boundedContext }}-global-${{ parameters.environment }}"
 
