@@ -111,7 +111,7 @@ jobs:
       
     - task: AzureAppServiceManage@0
       displayName: "Start App Service - ${{ parameters.environment }}"
-      condition: ne(variables['Build.Reason'], 'IndividualCI') and succeededOrFailed()
+      condition: succeededOrFailed()
       inputs:
         azureSubscription:  ${{ parameters.azureSubscription }}
         Action: "Start Azure App Service"
