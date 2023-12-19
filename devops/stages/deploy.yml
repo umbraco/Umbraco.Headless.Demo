@@ -37,7 +37,6 @@ stages:
         parameters:
           environment: ${{ parameters.environment }}
           environment_name: ${{ parameters.environmentName }}
-          bounded_context: ${{ parameters.boundedContext }}
           working_directory: "$(Build.Repository.LocalPath)/infrastructure/${{ lower(parameters.serviceName) }}"
           tf_version: ${{ parameters.terraformVersion }}
           service_variable_group: ${{ parameters.serviceVariableGroup }}
