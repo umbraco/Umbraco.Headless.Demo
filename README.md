@@ -1,9 +1,9 @@
 # Umbraco Headless Demo - Backend
 
-This branch represents the backend of the [Umbraco Headless Demo](https://github.com/umbraco/Umbraco.Headless.Demo) and consists of an Umbraco v12 application fully configured with following features:
+This branch represents the backend of the [Umbraco Headless Demo](https://github.com/umbraco/Umbraco.Headless.Demo) and consists of an Umbraco v13 application fully configured with following features:
 
-- Umbraco v12 + Umbraco Content Delivery API v1
-- Umbraco Commerce v12 + Umbraco Commerce Storefront API v1
+- Umbraco v13 + Umbraco Content Delivery API v1
+- Umbraco Commerce v13 + Umbraco Commerce Storefront API v1
 - Content Delivery API ready Value Converters for Umbraco Commerce property editors
 - Custom Umbraco Content Delivery API filters / sort criteria
 - Stripe Payment Provider integration (Inline and Redirects)
@@ -13,7 +13,7 @@ This branch represents the backend of the [Umbraco Headless Demo](https://github
 
 ## System Requirements
 
-See [Umbraco v12 system requirements](https://docs.umbraco.com/umbraco-cms/fundamentals/setup/requirements).
+See [Umbraco v13 system requirements](https://docs.umbraco.com/umbraco-cms/fundamentals/setup/requirements).
 
 ## Configuration
 
