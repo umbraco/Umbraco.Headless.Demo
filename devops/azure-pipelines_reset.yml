@@ -1,13 +1,12 @@
 trigger: none
 
-# schedules:
-# - cron: '0 0 * * *'
-#   displayName: Daily midnight build
-#   always: true
-#   branches:
-#     include:
-#     - backend/main
-#     - backend/dev
+schedules:
+- cron: '30 0 * * *'
+  displayName: Daily midnight build
+  always: true
+  branches:
+    include:
+    - backend/main
   
 stages:
   - stage: reset_dev
