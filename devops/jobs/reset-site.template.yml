@@ -76,8 +76,8 @@ jobs:
             -StorageUri "$env:DB_BACPAC_URL" `
             -Edition "Basic" `
             -ServiceObjectiveName "Basic" `
-            -StorageKey "$(variables.HEADLESS_SECRET_STORAGE_ACCESS_KEY)" `
-            -AdministratorLogin "$(variables.HEADLESS_SECRET_DATABASE_ADMIN)" `
+            -StorageKey "$(HEADLESS_SECRET_STORAGE_ACCESS_KEY)" `
+            -AdministratorLogin "$(HEADLESS_SECRET_DATABASE_ADMIN)" `
             -AdministratorLoginPassword (ConvertTo-SecureString -String "$(HEADLESS_SECRET_DATABASE_PASSWORD)" -AsPlainText -Force)
           
           # Wait for the import to complete
