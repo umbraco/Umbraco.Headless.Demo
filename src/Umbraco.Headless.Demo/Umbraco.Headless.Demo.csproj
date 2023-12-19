@@ -1,17 +1,18 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Umbraco.Cms.Core" Version="12.0.1" />
-    <PackageReference Include="Umbraco.Cms.Web.Website" Version="12.0.1" />
-    <PackageReference Include="Umbraco.Commerce.Cms.Startup" Version="12.1.0--preview.100.g3e37ccc" />
-    <PackageReference Include="Umbraco.Commerce.Cms.Web.Api.Storefront" Version="12.1.0--preview.100.g3e37ccc" />
-    <PackageReference Include="Umbraco.Commerce.Persistence.Sqlite" Version="12.1.0--preview.100.g3e37ccc" />
+    <PackageReference Include="Umbraco.Cms.Core" Version="13.0.1" />
+    <PackageReference Include="Umbraco.Cms.Web.Website" Version="13.0.1" />
+    <PackageReference Include="Umbraco.Commerce.Cms.Startup" Version="13.0.0" />
+    <PackageReference Include="Umbraco.Commerce.Cms.Web.Api.Storefront" Version="13.0.0" />
+    <PackageReference Include="Umbraco.Commerce.Persistence.Sqlite" Version="13.0.0" />
+    <PackageReference Include="Umbraco.Commerce.Persistence.SqlServer" Version="13.0.0" />
   </ItemGroup>
 
 </Project>

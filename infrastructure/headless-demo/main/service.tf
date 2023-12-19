@@ -84,3 +84,29 @@ resource "azurerm_app_service_custom_hostname_binding" "umbraco_hostname_binding
   resource_group_name = data.azurerm_resource_group.rg_headlessdemo.name
   depends_on = [time_sleep.umbraco_txt_wait_headlessdemo]
 }
+
+# SQL database
+module "sql-database" {
+  source = "../modules/sql-database"
+
+  environment         = var.environment
+  resource_group_name = data.azurerm_resource_group.rg_headlessdemo.name
+  location            = data.azurerm_resource_group.rg_headlessdemo.location
+  bounded_context     = local.bounded_context
+  service_name        = local.service_name
+  azure_tags          = local.common_azure_tags
+}
+
+# Storage account
+module "storage-account" {
+  source = "../modules/storage-account"
+
+  environment              = var.environment
+  resource_group_name      = data.azurerm_resource_group.rg_headlessdemo.name
+  location                 = data.azurerm_resource_group.rg_headlessdemo.location
+  bounded_context          = local.bounded_context
+  service_name             = local.service_name
+  allow_blob_public_access = true
+  containers               = ["is-cache"]
+  azure_tags               = local.common_azure_tags
+}

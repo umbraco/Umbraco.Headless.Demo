@@ -1,25 +1,26 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Umbraco.Cms" Version="12.0.1" />
+    <PackageReference Include="Azure.Identity" Version="1.10.4" />
+    <PackageReference Include="Umbraco.Cms" Version="13.0.1" />
   </ItemGroup>
 
   <ItemGroup>
     <!-- Opt-in to app-local ICU to ensure consistent globalization APIs across different platforms -->
-    <PackageReference Include="Microsoft.ICU.ICU4C.Runtime" Version="68.2.0.9" />
-    <PackageReference Include="Umbraco.Commerce" Version="12.1.0--preview.100.g3e37ccc" />
-    <PackageReference Include="Umbraco.Commerce.Cms.Web.Api.Storefront" Version="12.1.0--preview.100.g3e37ccc" />
-    <PackageReference Include="Umbraco.Commerce.PaymentProviders.Stripe" Version="12.1.0--preview.1.gb0df2d6" />
-    <PackageReference Include="Umbraco.Commerce.Persistence.Sqlite" Version="12.1.0--preview.100.g3e37ccc" />
-    <PackageReference Include="Umbraco.Community.Contentment" Version="4.4.4" />
-    <PackageReference Include="Umbraco.Forms" Version="12.1.0-rc1" />
+    <PackageReference Include="Microsoft.ICU.ICU4C.Runtime" Version="72.1.0.3" />
+    <PackageReference Include="Umbraco.Commerce" Version="13.0.0" />
+    <PackageReference Include="Umbraco.Commerce.Cms.Web.Api.Storefront" Version="13.0.0" />
+    <PackageReference Include="Umbraco.Commerce.PaymentProviders.Stripe" Version="13.0.0" />
+    <PackageReference Include="Umbraco.Commerce.Persistence.Sqlite" Version="13.0.0" />
+    <PackageReference Include="Umbraco.Commerce.Persistence.SqlServer" Version="13.0.0" />
+    <PackageReference Include="Umbraco.Forms" Version="13.0.0" />
     <ProjectReference Include="..\Umbraco.Headless.Demo\Umbraco.Headless.Demo.csproj" />
-    <RuntimeHostConfigurationOption Include="System.Globalization.AppLocalIcu" Value="68.2.0.9" Condition="$(RuntimeIdentifier.StartsWith('linux')) or $(RuntimeIdentifier.StartsWith('win')) or ('$(RuntimeIdentifier)' == '' and !$([MSBuild]::IsOSPlatform('osx')))" />
+    <RuntimeHostConfigurationOption Include="System.Globalization.AppLocalIcu" Value="72.1.0.3" Condition="$(RuntimeIdentifier.StartsWith('linux')) or $(RuntimeIdentifier.StartsWith('win')) or ('$(RuntimeIdentifier)' == '' and !$([MSBuild]::IsOSPlatform('osx')))" />
   </ItemGroup>
 
   <ItemGroup>
@@ -46,6 +47,7 @@
     <!-- Remove RazorCompileOnBuild and RazorCompileOnPublish when not using ModelsMode InMemoryAuto -->
     <RazorCompileOnBuild>false</RazorCompileOnBuild>
     <RazorCompileOnPublish>false</RazorCompileOnPublish>
+    <UserSecretsId>0cbebd9d-2084-4e96-afab-d01fc5aaac72</UserSecretsId>
   </PropertyGroup>
   
 </Project>

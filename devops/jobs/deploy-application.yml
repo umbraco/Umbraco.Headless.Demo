@@ -68,6 +68,24 @@ jobs:
                       "slotSetting": false
                     }
                   ]
+                connectionStrings: |
+                  [
+                    {
+                      "name": "umbracoDbDSN",
+                      "value": "$(DEV_DB_CONNECTION_STRINGS)",
+                      "type": "SQLServer",
+                      "slotSetting": false
+                    },
+                    {
+                      "name": "umbracoDbDSN_ProviderName",
+                      "value": "Microsoft.Data.SqlClient",
+                      "type": "SQLServer",
+                      "slotSetting": false
+                    }
+                  ]
+              env:
+                DEV_DB_CONNECTION_STRINGS: $(SECRET_DEV_DB_CONNECTION_STRINGS)
+
 
             - task: AzureAppServiceSettings@1
               displayName: 'Set Umbraco Web App Settings (Live)'
@@ -103,3 +121,20 @@ jobs:
                       "slotSetting": false
                     }
                   ]
+                connectionStrings: |
+                  [
+                    {
+                      "name": "umbracoDbDSN",
+                      "value": "$(LIVE_DB_CONNECTION_STRINGS)",
+                      "type": "SQLServer",
+                      "slotSetting": false
+                    },
+                    {
+                      "name": "umbracoDbDSN_ProviderName",
+                      "value": "Microsoft.Data.SqlClient",
+                      "type": "SQLServer",
+                      "slotSetting": false
+                    }
+                  ]
+              env:
+                LIVE_DB_CONNECTION_STRINGS: $(SECRET_LIVE_DB_CONNECTION_STRINGS)
