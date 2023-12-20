@@ -68,6 +68,7 @@ jobs:
                       "slotSetting": false
                     }
                   ]
+                connectionStrings: '[]'
 
             - task: AzureAppServiceSettings@1
               displayName: 'Set Umbraco Web App Settings (Live)'
@@ -103,3 +104,4 @@ jobs:
                       "slotSetting": false
                     }
                   ]
+                connectionStrings: '[]'
