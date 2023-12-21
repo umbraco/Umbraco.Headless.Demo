@@ -64,7 +64,7 @@ jobs:
                     },
                     {
                       "name": "Site__DisableEdits",
-                      "value": true,
+                      "value": false,
                       "slotSetting": false
                     }
                   ]
