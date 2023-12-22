@@ -27,12 +27,12 @@ jobs:
           WebAppName: "azapp-${{ parameters.environment }}-demos-${{ parameters.serviceName }}-umbraco"
 
       - task: AzurePowerShell@5
-        displayName: "Remove database - ${{ parameters.environment }}"
+        displayName: "Check and Remove Azure SQL Database - ${{ parameters.environment }}"
         inputs:
           azureSubscription:  ${{ parameters.azureSubscription }}
           ScriptType: "InlineScript"
           Inline: |
-            $databases = Get-AzSqlDatabase -ResourceGroupName "${{ parameters.resourceGroupName }}" -ServerName "${{ parameters.sqlServerName }}" `
+            $databases = Get-AzSqlDatabase -ResourceGroupName "${{ parameters.resourceGroupName }}" -ServerName "${{ parameters.sqlServerName }}"
             $databaseExists = $databases.Name -contains "${{ parameters.databaseName }}"
             
             if ($databaseExists) {
@@ -42,6 +42,7 @@ jobs:
                 -ServerName "${{ parameters.sqlServerName }}" `
                 -DatabaseName "${{ parameters.databaseName }}"
               Write-Host "Database removal complete"
+            }
             else {
                 Write-Host "Database ${{ parameters.databaseName }} does not exist."
             }
