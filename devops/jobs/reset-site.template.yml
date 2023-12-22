@@ -32,8 +32,17 @@ jobs:
           azureSubscription:  ${{ parameters.azureSubscription }}
           ScriptType: "InlineScript"
           Inline: |
-            $databases = Get-AzSqlDatabase -ResourceGroupName "${{ parameters.resourceGroupName }}" -ServerName "${{ parameters.sqlServerName }}"
-            $databaseExists = $databases.Name -contains "${{ parameters.databaseName }}"
+            $databaseExists = false
+            try {
+              $sqlServer = Get-AzSqlServer -ResourceGroupName "${{ parameters.resourceGroupName }}" -ServerName "${{ parameters.sqlServerName }}"
+              if ($sqlServer) {
+                  Write-Host "SQL Server '${{ parameters.sqlServerName }}' exists in resource group '${{ parameters.resourceGroupName }}'."
+                  $databases = Get-AzSqlDatabase -ResourceGroupName "${{ parameters.resourceGroupName }}" -ServerName "${{ parameters.sqlServerName }}"
+                  $databaseExists = $databases.Name -contains "${{ parameters.databaseName }}"
+              }
+            } catch {
+                Write-Host "SQL Server '${{ parameters.sqlServerName }}' does not exist in resource group '${{ parameters.resourceGroupName }}'."
+            }
             
             if ($databaseExists) {
               Write-Host "Remove the existing database"
