@@ -32,28 +32,18 @@ jobs:
           azureSubscription:  ${{ parameters.azureSubscription }}
           ScriptType: "InlineScript"
           Inline: |
-            $databaseExists = false
-            try {
-              $sqlServer = Get-AzSqlServer -ResourceGroupName "${{ parameters.resourceGroupName }}" -ServerName "${{ parameters.sqlServerName }}"
-              if ($sqlServer) {
-                  Write-Host "SQL Server '${{ parameters.sqlServerName }}' exists in resource group '${{ parameters.resourceGroupName }}'."
-                  $databases = Get-AzSqlDatabase -ResourceGroupName "${{ parameters.resourceGroupName }}" -ServerName "${{ parameters.sqlServerName }}"
-                  $databaseExists = $databases.Name -contains "${{ parameters.databaseName }}"
-              }
-            } catch {
-                Write-Host "SQL Server '${{ parameters.sqlServerName }}' does not exist in resource group '${{ parameters.resourceGroupName }}'."
-            }
-            
-            if ($databaseExists) {
-              Write-Host "Remove the existing database"
-              Remove-AzSqlDatabase `
-                -ResourceGroupName "${{ parameters.resourceGroupName }}" `
-                -ServerName "${{ parameters.sqlServerName }}" `
-                -DatabaseName "${{ parameters.databaseName }}"
-              Write-Host "Database removal complete"
-            }
-            else {
-                Write-Host "Database ${{ parameters.databaseName }} does not exist."
+            $sqlServer = Get-AzSqlServer -ResourceGroupName "${{ parameters.resourceGroupName }}" -ServerName "${{ parameters.sqlServerName }}"
+            if ($sqlServer) {
+                Write-Host "SQL Server '${{ parameters.sqlServerName }}' exists in resource group '${{ parameters.resourceGroupName }}'."
+                $databases = Get-AzSqlDatabase -ResourceGroupName "${{ parameters.resourceGroupName }}" -ServerName "${{ parameters.sqlServerName }}"
+                $databaseExists = $databases.Name -contains "${{ parameters.databaseName }}"
+              
+                Write-Host "Remove the existing database"
+                Remove-AzSqlDatabase `
+                  -ResourceGroupName "${{ parameters.resourceGroupName }}" `
+                  -ServerName "${{ parameters.sqlServerName }}" `
+                  -DatabaseName "${{ parameters.databaseName }}"
+                Write-Host "Database removal complete"
             }
           preferredAzurePowerShellVersion: 11.1.0
 
@@ -123,6 +113,7 @@ jobs:
           } else {
               Write-Host "Database import failed"
               Write-Host "Error: $($status.ErrorMessage)"
+              exit 1 # mark task as failed
           }
         preferredAzurePowerShellVersion: 11.1.0   
       
