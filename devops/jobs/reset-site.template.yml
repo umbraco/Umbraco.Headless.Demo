@@ -1,0 +1,135 @@
+parameters:
+  - name: environment # dev/live
+  - name: environmentName
+  - name: azureSubscription
+  - name: resourceGroupName
+  - name: databaseName
+  - name: sqlServerName
+  - name: boundedContext
+    type: string
+    default: 'demos'
+  - name: serviceName
+    type: string
+    default: 'headless-demo'
+  - name: terraformVersion
+    type: string
+    default: 1.1.7
+
+jobs:
+  - job: remove_old_db_${{ parameters.environment }}
+    displayName: "Remove old database - ${{ parameters.environment }}"
+    steps:
+      - task: AzureAppServiceManage@0
+        displayName: "Stop App Service"
+        inputs:
+          azureSubscription: ${{ parameters.azureSubscription }}
+          Action: "Stop Azure App Service"
+          WebAppName: "azapp-${{ parameters.environment }}-demos-${{ parameters.serviceName }}-umbraco"
+
+      - task: AzurePowerShell@5
+        displayName: "Check and Remove Azure SQL Database - ${{ parameters.environment }}"
+        inputs:
+          azureSubscription:  ${{ parameters.azureSubscription }}
+          ScriptType: "InlineScript"
+          Inline: |
+            $databaseExists = false
+            try {
+              $sqlServer = Get-AzSqlServer -ResourceGroupName "${{ parameters.resourceGroupName }}" -ServerName "${{ parameters.sqlServerName }}"
+              if ($sqlServer) {
+                  Write-Host "SQL Server '${{ parameters.sqlServerName }}' exists in resource group '${{ parameters.resourceGroupName }}'."
+                  $databases = Get-AzSqlDatabase -ResourceGroupName "${{ parameters.resourceGroupName }}" -ServerName "${{ parameters.sqlServerName }}"
+                  $databaseExists = $databases.Name -contains "${{ parameters.databaseName }}"
+              }
+            } catch {
+                Write-Host "SQL Server '${{ parameters.sqlServerName }}' does not exist in resource group '${{ parameters.resourceGroupName }}'."
+            }
+            
+            if ($databaseExists) {
+              Write-Host "Remove the existing database"
+              Remove-AzSqlDatabase `
+                -ResourceGroupName "${{ parameters.resourceGroupName }}" `
+                -ServerName "${{ parameters.sqlServerName }}" `
+                -DatabaseName "${{ parameters.databaseName }}"
+              Write-Host "Database removal complete"
+            }
+            else {
+                Write-Host "Database ${{ parameters.databaseName }} does not exist."
+            }
+          preferredAzurePowerShellVersion: 11.1.0
+
+  # Provision infrastructure to recreate the sql database
+  - template: ./provision-infrastructure.yml
+    parameters:
+      environment: ${{ parameters.environment }}
+      environment_name: ${{ parameters.environmentName }}
+      working_directory: "$(Build.Repository.LocalPath)/infrastructure/${{ lower(parameters.serviceName) }}"
+      tf_version: ${{ parameters.terraformVersion }}
+      service_variable_group: "${{ parameters.boundedContext }}-global-${{ parameters.environment }}"
+      service_connection_name: ${{ parameters.azureSubscription }}
+      paramDependsOn: remove_old_db_${{ parameters.environment }}
+
+  - job: import_db_${{ parameters.environment }}
+    displayName: "Import db - ${{ parameters.environment }}"
+    dependsOn: provisioning_infrastructure
+    condition: succeededOrFailed()
+    variables:
+      - group: "${{ parameters.boundedContext }}-global-${{ parameters.environment }}"
+
+    steps:
+    - task: AzurePowerShell@5
+      displayName: "Import database from a backup - ${{ parameters.environment }}"
+      inputs:
+        azureSubscription:  ${{ parameters.azureSubscription }}
+        ScriptType: "InlineScript"
+        Inline: |
+          Write-Host "Import database from .bacpac"
+          $oneGBInBytes = 1 * 1024 * 1024 * 1024
+          $importRequest = New-AzSqlDatabaseImport `
+            -ResourceGroupName "${{ parameters.resourceGroupName }}" `
+            -ServerName "${{ parameters.sqlServerName }}" `
+            -DatabaseName "${{ parameters.databaseName }}" `
+            -DatabaseMaxSizeBytes $oneGBInBytes `
+            -StorageKeyType "StorageAccessKey" `
+            -StorageUri "$env:DB_BACPAC_URL" `
+            -Edition "Basic" `
+            -ServiceObjectiveName "Basic" `
+            -StorageKey "$(HEADLESS_SECRET_STORAGE_ACCESS_KEY)" `
+            -AdministratorLogin "$(HEADLESS_SECRET_DATABASE_ADMIN)" `
+            -AdministratorLoginPassword (ConvertTo-SecureString -String "$(HEADLESS_SECRET_DATABASE_PASSWORD)" -AsPlainText -Force)
+          
+          # Wait for the import to complete
+          $maxRetry = 2;
+          $retryCount = 0;
+          do {
+              Start-Sleep -Seconds 10
+              try {
+                  $status = Get-AzSqlDatabaseImportExportStatus -OperationStatusLink $importRequest.OperationStatusLink
+                  Write-Host "Import status: $($status.Status)..."
+              } catch {
+                  $retryCount++
+                  if ($retryCount -eq $maxRetry) {
+                    Write-Host "Unable to get import database status. Max retry reached."  
+                    break
+                  }
+
+                  Write-Host "Get import status operation timed out. Retrying... ($retryCount)"
+                  Start-Sleep -Seconds 10
+              }
+          } while ($status.Status -eq "InProgress" -or $status.Status -eq "Pending")
+
+          # Check if the import was successful
+          if ($status.Status -eq "Succeeded") {
+              Write-Host "Database import succeeded"
+          } else {
+              Write-Host "Database import failed"
+              Write-Host "Error: $($status.ErrorMessage)"
+          }
+        preferredAzurePowerShellVersion: 11.1.0   
+      
+    - task: AzureAppServiceManage@0
+      displayName: "Start App Service - ${{ parameters.environment }}"
+      condition: succeededOrFailed()
+      inputs:
+        azureSubscription:  ${{ parameters.azureSubscription }}
+        Action: "Start Azure App Service"
+        WebAppName: "azapp-${{ parameters.environment }}-demos-${{ parameters.serviceName }}-umbraco"

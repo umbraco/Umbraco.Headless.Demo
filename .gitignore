@@ -486,3 +486,5 @@ $RECYCLE.BIN/
 **/Umbraco/Logs/
 **/Umbraco/mediacache/
 *.local.sln
+infrastructure/headless-demo/backend/backend.env.tfvars
+/infrastructure/headless-demo/backend/backend.env.tfvars

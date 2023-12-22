@@ -1,0 +1,36 @@
+trigger: none
+
+schedules:
+- cron: '30 0 * * *'
+  displayName: Daily midnight build
+  always: true
+  branches:
+    include:
+    - backend/main
+  
+stages:
+  - stage: reset_dev
+    displayName: "Reset Dev"
+    jobs:
+    - template: ./jobs/reset-site.template.yml
+      parameters:
+        environment: dev
+        environmentName: Development
+        azureSubscription: Infra-dev-global-Demos
+        resourceGroupName: rg-dev-global-demos
+        sqlServerName: sqlsrv-dev-demos-headless-demo
+        databaseName: sqldb-dev-demos-headless-demo
+
+  - stage: reset_live
+    displayName: "Reset Live"
+    dependsOn: []
+    jobs:
+    - template: ./jobs/reset-site.template.yml
+      parameters:
+        environment: live
+        environmentName: Live
+        azureSubscription: Infra-live-global-Demos
+        resourceGroupName: rg-live-global-demos
+        sqlServerName: sqlsrv-live-demos-headless-demo
+        databaseName: sqldb-live-demos-headless-demo
+    

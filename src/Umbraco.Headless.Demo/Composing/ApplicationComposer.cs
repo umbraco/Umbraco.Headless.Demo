@@ -70,7 +70,29 @@ namespace Umbraco.Headless.Demo.Composing
             public void Handle(ContentDeletingNotification notification) => DoHandle(notification);
             public void Handle(MediaSavingNotification notification) => DoHandle(notification);
             public void Handle(MediaDeletingNotification notification) => DoHandle(notification);
-            public void Handle(UserSavingNotification notification) => DoHandle(notification);
+            public void Handle(UserSavingNotification notification)
+            {
+                // We need to allow setting of last login dates etc, but we'll block 
+                // anything else
+                var readonlyUserProperties = new[]{
+                    "Name",
+                    "Username",
+                    "Email",
+                    "Avatar",
+                    "RawPasswordValue",
+                    "PasswordConfiguration",
+                    "StartContentIds",
+                    "StartMediaIds",
+                    "Language",
+                    "Language",
+                    "Groups"
+                };
+
+                if (notification.SavedEntities.Any(x => readonlyUserProperties.Any(y => x.IsPropertyDirty(y))))
+                {
+                    DoHandle(notification);
+                }
+            }
             public void Handle(UserDeletingNotification notification) => DoHandle(notification);
             public void Handle(ContentTypeSavingNotification notification) => DoHandle(notification);
             public void Handle(ContentTypeDeletingNotification notification) => DoHandle(notification);
