@@ -1,10 +1,11 @@
 parameters:
-  umbraco_project_name:
-  environment: # dev/live
-  environment_name:
-  bounded_context:
-  service_name:
-  service_connection_name:
+  - name: umbraco_project_name
+  - name: environment # dev/live
+  - name: environment_name
+  - name: bounded_context
+    default: "demos"
+  - name: service_name
+  - name: service_connection_name
 
 jobs:
   - deployment: deploy_application
@@ -13,7 +14,9 @@ jobs:
     dependsOn:
       - provisioning_infrastructure
     variables:
-      adminWebsiteWebAppName: 'azapp-${{ parameters.environment }}-${{ parameters.bounded_context }}-${{ parameters.service_name }}-umbraco'
+      - group: "${{ parameters.boundedContext }}-global-${{ parameters.environment }}"
+      - name: adminWebsiteWebAppName
+        value: 'azapp-${{ parameters.environment }}-${{ parameters.bounded_context }}-${{ parameters.service_name }}-umbraco'
 
     strategy:
       runOnce:
@@ -72,7 +75,7 @@ jobs:
                   [
                     {
                       "name": "umbracoDbDSN",
-                      "value": "$(DEV_DB_CONNECTION_STRINGS)",
+                      "value": "$(HEADLESS_SECRET_CONNECTION_STRINGS)",
                       "type": "SQLServer",
                       "slotSetting": false
                     },
@@ -83,9 +86,6 @@ jobs:
                       "slotSetting": false
                     }
                   ]
-              env:
-                DEV_DB_CONNECTION_STRINGS: $(SECRET_DEV_DB_CONNECTION_STRINGS)
-
 
             - task: AzureAppServiceSettings@1
               displayName: 'Set Umbraco Web App Settings (Live)'
@@ -125,7 +125,7 @@ jobs:
                   [
                     {
                       "name": "umbracoDbDSN",
-                      "value": "$(LIVE_DB_CONNECTION_STRINGS)",
+                      "value": "$(HEADLESS_SECRET_CONNECTION_STRINGS)",
                       "type": "SQLServer",
                       "slotSetting": false
                     },
@@ -136,5 +136,3 @@ jobs:
                       "slotSetting": false
                     }
                   ]
-              env:
-                LIVE_DB_CONNECTION_STRINGS: $(SECRET_LIVE_DB_CONNECTION_STRINGS)
