@@ -32,12 +32,19 @@ jobs:
           azureSubscription:  ${{ parameters.azureSubscription }}
           ScriptType: "InlineScript"
           Inline: |
-            Write-Host "Remove the existing database"
-            Remove-AzSqlDatabase `
-              -ResourceGroupName "${{ parameters.resourceGroupName }}" `
-              -ServerName "${{ parameters.sqlServerName }}" `
-              -DatabaseName "${{ parameters.databaseName }}"
-            Write-Host "Database removal complete"
+            $databases = Get-AzSqlDatabase -ResourceGroupName "${{ parameters.resourceGroupName }}" -ServerName "${{ parameters.sqlServerName }}" `
+            $databaseExists = $databases.Name -contains "${{ parameters.databaseName }}"
+            
+            if ($databaseExists) {
+              Write-Host "Remove the existing database"
+              Remove-AzSqlDatabase `
+                -ResourceGroupName "${{ parameters.resourceGroupName }}" `
+                -ServerName "${{ parameters.sqlServerName }}" `
+                -DatabaseName "${{ parameters.databaseName }}"
+              Write-Host "Database removal complete"
+            else {
+                Write-Host "Database ${{ parameters.databaseName }} does not exist."
+            }
           preferredAzurePowerShellVersion: 11.1.0
 
   # Provision infrastructure to recreate the sql database
