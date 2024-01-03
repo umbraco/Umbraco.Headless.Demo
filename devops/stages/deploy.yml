@@ -30,6 +30,7 @@ stages:
     displayName: "Deploy Infrastructure and Artifacts - ${{parameters.environmentName}}"
     variables:
       - group: ${{parameters.serviceVariableGroup}}
+      - group: "headless-demo-${{ parameters.environment }}"
 
     jobs:
       # Provision infrastructure

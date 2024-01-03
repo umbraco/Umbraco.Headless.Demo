@@ -11,6 +11,7 @@ jobs:
     continueOnError: false
     variables:
       - group: ${{ parameters.service_variable_group }}
+      - group: "headless-demo-${{ parameters.environment }}"
       - name: environment
         value: ${{ parameters.environment }}
 
