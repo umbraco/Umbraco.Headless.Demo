@@ -64,6 +64,7 @@ jobs:
     condition: succeededOrFailed()
     variables:
       - group: "${{ parameters.boundedContext }}-global-${{ parameters.environment }}"
+      - group: "headless-demo-${{ parameters.environment }}"
 
     steps:
     - task: AzurePowerShell@5

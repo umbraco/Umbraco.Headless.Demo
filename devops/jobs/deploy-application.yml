@@ -15,6 +15,7 @@ jobs:
       - provisioning_infrastructure
     variables:
       - group: "${{ parameters.bounded_context }}-global-${{ parameters.environment }}"
+      - group: "headless-demo-${{ parameters.environment }}"
       - name: adminWebsiteWebAppName
         value: 'azapp-${{ parameters.environment }}-${{ parameters.bounded_context }}-${{ parameters.service_name }}-umbraco'
 
