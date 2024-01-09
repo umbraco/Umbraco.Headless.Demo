@@ -11,6 +11,7 @@ schedules:
 stages:
   - stage: reset_dev
     displayName: "Reset Dev"
+    condition: ne(variables['Build.Reason'], 'Schedule')
     jobs:
     - template: ./jobs/reset-site.template.yml
       parameters:
