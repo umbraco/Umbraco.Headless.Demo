@@ -89,24 +89,26 @@ jobs:
             -AdministratorLoginPassword (ConvertTo-SecureString -String "$(HEADLESS_SECRET_DATABASE_PASSWORD)" -AsPlainText -Force)
           
           # Wait for the import to complete
+          $loopCount = 0;
           $maxRetry = 2;
           $retryCount = 0;
           do {
-              Start-Sleep -Seconds 10
-              try {
-                  $status = Get-AzSqlDatabaseImportExportStatus -OperationStatusLink $importRequest.OperationStatusLink
-                  Write-Host "Import status: $($status.Status)..."
-              } catch {
-                  $retryCount++
-                  if ($retryCount -eq $maxRetry) {
-                    Write-Host "Unable to get import database status. Max retry reached."  
-                    break
-                  }
+            $loopCount++;
+            Start-Sleep -Seconds 10
+            try {
+                $status = Get-AzSqlDatabaseImportExportStatus -OperationStatusLink $importRequest.OperationStatusLink
+                Write-Host "Import status: $($status.Status)..."
+            } catch {
+                $retryCount++
+                if ($retryCount -eq $maxRetry) {
+                  Write-Host "Unable to get import database status. Max retry reached."  
+                  break
+                }
 
-                  Write-Host "Get import status operation timed out. Retrying... ($retryCount)"
-                  Start-Sleep -Seconds 10
-              }
-          } while ($status.Status -eq "InProgress" -or $status.Status -eq "Pending")
+                Write-Host "Get import status operation timed out. Retrying... ($retryCount)"
+                Start-Sleep -Seconds 10
+            }
+          } while (($status.Status -eq "InProgress" -or $status.Status -eq "Pending") -and $loopCount -lt 200)
 
           # Check if the import was successful
           if ($status.Status -eq "Succeeded") {
