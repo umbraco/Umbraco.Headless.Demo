@@ -46,7 +46,7 @@ jobs:
                   -DatabaseName "${{ parameters.databaseName }}"
                 Write-Host "Database removal complete"
             }
-          preferredAzurePowerShellVersion: 11.1.0
+          preferredAzurePowerShellVersion: 11.2.0
 
   # Provision infrastructure to re-create the sql database
   - template: ./provision-infrastructure.yml
@@ -136,7 +136,7 @@ jobs:
               Write-Host "Error: $($status.ErrorMessage)"
               exit 1 # mark task as failed
           }
-        preferredAzurePowerShellVersion: 11.1.0   
+        preferredAzurePowerShellVersion: 11.2.0   
 
    # Provision infrastructure again to scale down database
 
