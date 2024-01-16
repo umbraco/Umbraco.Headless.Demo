@@ -120,9 +120,19 @@ jobs:
             }
           } while (($status.Status -eq "InProgress" -or $status.Status -eq "Pending") -and $loopCount -lt 200)
 
+          Write-Host "Scale down database"
+          Set-AzSqlDatabase `
+            -ResourceGroupName "${{ parameters.resourceGroupName }}" `
+            -DatabaseName "${{ parameters.databaseName }}" `
+            -ServerName "${{ parameters.sqlServerName }}" `
+            -Edition "Basic" `
+            -RequestedServiceObjectiveName "Basic"
+
           # Check if the import was successful
+          $isSuccess = False
           if ($status.Status -eq "Succeeded") {
               Write-Host "Database import succeeded"
+              $isSuccess = True
           } else {
               Write-Host "Database import failed"
               Write-Host "Error: $($status.ErrorMessage)"
@@ -139,14 +149,3 @@ jobs:
         azureSubscription:  ${{ parameters.azureSubscription }}
         Action: "Start Azure App Service"
         WebAppName: "azapp-${{ parameters.environment }}-demos-${{ parameters.serviceName }}-umbraco"
-
-  # Provision infrastructure again to scale down databse
-  - template: ./provision-infrastructure.yml
-    parameters:
-      environment: ${{ parameters.environment }}
-      environment_name: ${{ parameters.environmentName }}
-      working_directory: "$(Build.Repository.LocalPath)/infrastructure/${{ lower(parameters.serviceName) }}"
-      tf_version: ${{ parameters.terraformVersion }}
-      service_variable_group: "${{ parameters.boundedContext }}-global-${{ parameters.environment }}"
-      service_connection_name: ${{ parameters.azureSubscription }}
-      paramDependsOn: remove_old_db_${{ parameters.environment }}
