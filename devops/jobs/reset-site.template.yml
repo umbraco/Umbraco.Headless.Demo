@@ -138,8 +138,6 @@ jobs:
           }
         preferredAzurePowerShellVersion: 11.2.0   
 
-   # Provision infrastructure again to scale down database
-
     - task: AzureAppServiceManage@0
       displayName: "Start App Service - ${{ parameters.environment }}"
       condition: succeededOrFailed()
