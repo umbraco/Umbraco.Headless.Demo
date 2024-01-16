@@ -129,10 +129,8 @@ jobs:
             -RequestedServiceObjectiveName "Basic"
 
           # Check if the import was successful
-          $isSuccess = False
           if ($status.Status -eq "Succeeded") {
               Write-Host "Database import succeeded"
-              $isSuccess = True
           } else {
               Write-Host "Database import failed"
               Write-Host "Error: $($status.ErrorMessage)"
