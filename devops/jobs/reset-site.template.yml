@@ -16,6 +16,7 @@ parameters:
     default: 1.1.7
 
 jobs:
+  # Remove existing database
   - job: remove_old_db_${{ parameters.environment }}
     displayName: "Remove old database - ${{ parameters.environment }}"
     steps:
@@ -47,7 +48,7 @@ jobs:
             }
           preferredAzurePowerShellVersion: 11.1.0
 
-  # Provision infrastructure to recreate the sql database
+  # Provision infrastructure to re-create the sql database
   - template: ./provision-infrastructure.yml
     parameters:
       environment: ${{ parameters.environment }}
@@ -58,6 +59,7 @@ jobs:
       service_connection_name: ${{ parameters.azureSubscription }}
       paramDependsOn: remove_old_db_${{ parameters.environment }}
 
+  # Import database from backup
   - job: import_db_${{ parameters.environment }}
     displayName: "Import db - ${{ parameters.environment }}"
     dependsOn: provisioning_infrastructure
@@ -127,17 +129,8 @@ jobs:
               exit 1 # mark task as failed
           }
         preferredAzurePowerShellVersion: 11.1.0   
-      
-    # Provision infrastructure again to scale down database
-    - template: ./provision-infrastructure.yml
-      parameters:
-        environment: ${{ parameters.environment }}
-        environment_name: ${{ parameters.environmentName }}
-        working_directory: "$(Build.Repository.LocalPath)/infrastructure/${{ lower(parameters.serviceName) }}"
-        tf_version: ${{ parameters.terraformVersion }}
-        service_variable_group: "${{ parameters.boundedContext }}-global-${{ parameters.environment }}"
-        service_connection_name: ${{ parameters.azureSubscription }}
-        paramDependsOn: remove_old_db_${{ parameters.environment }}
+
+   # Provision infrastructure again to scale down database
 
     - task: AzureAppServiceManage@0
       displayName: "Start App Service - ${{ parameters.environment }}"
@@ -146,3 +139,14 @@ jobs:
         azureSubscription:  ${{ parameters.azureSubscription }}
         Action: "Start Azure App Service"
         WebAppName: "azapp-${{ parameters.environment }}-demos-${{ parameters.serviceName }}-umbraco"
+
+  # Provision infrastructure again to scale down databse
+  - template: ./provision-infrastructure.yml
+    parameters:
+      environment: ${{ parameters.environment }}
+      environment_name: ${{ parameters.environmentName }}
+      working_directory: "$(Build.Repository.LocalPath)/infrastructure/${{ lower(parameters.serviceName) }}"
+      tf_version: ${{ parameters.terraformVersion }}
+      service_variable_group: "${{ parameters.boundedContext }}-global-${{ parameters.environment }}"
+      service_connection_name: ${{ parameters.azureSubscription }}
+      paramDependsOn: remove_old_db_${{ parameters.environment }}
