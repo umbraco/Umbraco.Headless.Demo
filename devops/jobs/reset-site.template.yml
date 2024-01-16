@@ -75,7 +75,7 @@ jobs:
         azureSubscription:  ${{ parameters.azureSubscription }}
         ScriptType: "InlineScript"
         Inline: |
-          Write-Host "Scale up database tier before importing"
+          Write-Host "Scaling up database tier before importing..."
           Set-AzSqlDatabase `
             -ResourceGroupName "${{ parameters.resourceGroupName }}" `
             -DatabaseName "${{ parameters.databaseName }}" `
@@ -120,7 +120,7 @@ jobs:
             }
           } while (($status.Status -eq "InProgress" -or $status.Status -eq "Pending") -and $loopCount -lt 200)
 
-          Write-Host "Scale down database"
+          Write-Host "Scaling down database after importing..."
           Set-AzSqlDatabase `
             -ResourceGroupName "${{ parameters.resourceGroupName }}" `
             -DatabaseName "${{ parameters.databaseName }}" `
