@@ -73,6 +73,14 @@ jobs:
         azureSubscription:  ${{ parameters.azureSubscription }}
         ScriptType: "InlineScript"
         Inline: |
+          Write-Host "Scale up database tier before importing"
+          Set-AzSqlDatabase `
+            -ResourceGroupName "${{ parameters.resourceGroupName }}" `
+            -DatabaseName "${{ parameters.databaseName }}" `
+            -ServerName "${{ parameters.sqlServerName }}" `
+            -Edition "Standard" `
+            -RequestedServiceObjectiveName "S3"
+
           Write-Host "Import database from .bacpac"
           $oneGBInBytes = 1 * 1024 * 1024 * 1024
           $importRequest = New-AzSqlDatabaseImport `
@@ -120,6 +128,17 @@ jobs:
           }
         preferredAzurePowerShellVersion: 11.1.0   
       
+    # Provision infrastructure again to scale down database
+    - template: ./provision-infrastructure.yml
+      parameters:
+        environment: ${{ parameters.environment }}
+        environment_name: ${{ parameters.environmentName }}
+        working_directory: "$(Build.Repository.LocalPath)/infrastructure/${{ lower(parameters.serviceName) }}"
+        tf_version: ${{ parameters.terraformVersion }}
+        service_variable_group: "${{ parameters.boundedContext }}-global-${{ parameters.environment }}"
+        service_connection_name: ${{ parameters.azureSubscription }}
+        paramDependsOn: remove_old_db_${{ parameters.environment }}
+
     - task: AzureAppServiceManage@0
       displayName: "Start App Service - ${{ parameters.environment }}"
       condition: succeededOrFailed()
