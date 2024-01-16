@@ -16,6 +16,7 @@ parameters:
     default: 1.1.7
 
 jobs:
+  # Remove existing database
   - job: remove_old_db_${{ parameters.environment }}
     displayName: "Remove old database - ${{ parameters.environment }}"
     steps:
@@ -45,9 +46,9 @@ jobs:
                   -DatabaseName "${{ parameters.databaseName }}"
                 Write-Host "Database removal complete"
             }
-          preferredAzurePowerShellVersion: 11.1.0
+          preferredAzurePowerShellVersion: 11.2.0
 
-  # Provision infrastructure to recreate the sql database
+  # Provision infrastructure to re-create the sql database
   - template: ./provision-infrastructure.yml
     parameters:
       environment: ${{ parameters.environment }}
@@ -58,6 +59,7 @@ jobs:
       service_connection_name: ${{ parameters.azureSubscription }}
       paramDependsOn: remove_old_db_${{ parameters.environment }}
 
+  # Import database from backup
   - job: import_db_${{ parameters.environment }}
     displayName: "Import db - ${{ parameters.environment }}"
     dependsOn: provisioning_infrastructure
@@ -73,6 +75,14 @@ jobs:
         azureSubscription:  ${{ parameters.azureSubscription }}
         ScriptType: "InlineScript"
         Inline: |
+          Write-Host "Scaling up database tier before importing..."
+          Set-AzSqlDatabase `
+            -ResourceGroupName "${{ parameters.resourceGroupName }}" `
+            -DatabaseName "${{ parameters.databaseName }}" `
+            -ServerName "${{ parameters.sqlServerName }}" `
+            -Edition "Standard" `
+            -RequestedServiceObjectiveName "S3"
+
           Write-Host "Import database from .bacpac"
           $oneGBInBytes = 1 * 1024 * 1024 * 1024
           $importRequest = New-AzSqlDatabaseImport `
@@ -110,6 +120,14 @@ jobs:
             }
           } while (($status.Status -eq "InProgress" -or $status.Status -eq "Pending") -and $loopCount -lt 200)
 
+          Write-Host "Scaling down database after importing..."
+          Set-AzSqlDatabase `
+            -ResourceGroupName "${{ parameters.resourceGroupName }}" `
+            -DatabaseName "${{ parameters.databaseName }}" `
+            -ServerName "${{ parameters.sqlServerName }}" `
+            -Edition "Basic" `
+            -RequestedServiceObjectiveName "Basic"
+
           # Check if the import was successful
           if ($status.Status -eq "Succeeded") {
               Write-Host "Database import succeeded"
@@ -118,8 +136,8 @@ jobs:
               Write-Host "Error: $($status.ErrorMessage)"
               exit 1 # mark task as failed
           }
-        preferredAzurePowerShellVersion: 11.1.0   
-      
+        preferredAzurePowerShellVersion: 11.2.0   
+
     - task: AzureAppServiceManage@0
       displayName: "Start App Service - ${{ parameters.environment }}"
       condition: succeededOrFailed()
