@@ -2,10 +2,10 @@
 
 import { RadioGroup } from '@headlessui/react';
 import { CheckoutStep } from 'app/checkout/steps';
-import { setPaymentMethod as doSetPaymentMethod, getPaymentMethods } from 'components/cart-actions';
+import { calculatePaymentMethodFees, setPaymentMethod as doSetPaymentMethod } from 'components/cart-actions';
 import { CartContext } from 'components/cart-context';
 import LoadingDots from 'components/loading-dots';
-import { Cart, PaymentMethod } from 'lib/umbraco/types';
+import { Cart, PaymentMethodWithFee } from 'lib/umbraco/types';
 import { useRouter } from 'next/navigation';
 import { useContext, useEffect, useState, useTransition } from 'react';
 import CheckoutRadioOption from './checkout-radio-option';
@@ -25,7 +25,7 @@ export default function CheckoutPaymentStep({
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
-  const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[] | undefined>(undefined);
+  const [paymentMethods, setPaymentMethods] = useState<PaymentMethodWithFee[] | undefined>(undefined);
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string | undefined>(undefined);
   const [isLoading, setLoading] = useState(true);
 
@@ -46,8 +46,8 @@ export default function CheckoutPaymentStep({
 
   useEffect(() => {
     if (currentCart) {
-      getPaymentMethods().then((data) => {
-        const items = data as PaymentMethod[];
+      calculatePaymentMethodFees().then((data) => {
+        const items = data as PaymentMethodWithFee[];
         if (items) {
           setPaymentMethods(items);
           setSelectedPaymentMethod(currentCart.paymentMethod?.alias || items[0]!.alias);
@@ -86,7 +86,7 @@ export default function CheckoutPaymentStep({
               {paymentMethods.map((item) => (
                 <RadioGroup.Option key={item.id} value={item.alias}>
                   {({ checked }) => (
-                    <CheckoutRadioOption title={item.name} price={item.price} checked={checked} />
+                    <CheckoutRadioOption title={item.name} price={item.fee} checked={checked} />
                   )}
                 </RadioGroup.Option>
               ))}

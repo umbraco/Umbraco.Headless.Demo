@@ -3,12 +3,12 @@
 import { RadioGroup } from '@headlessui/react';
 import { CheckoutStep } from 'app/checkout/steps';
 import {
-  setShippingMethod as doSetShippingMethod,
-  getShippingMethods
+  calculateShippingMethodRates,
+  setShippingMethod as doSetShippingMethod
 } from 'components/cart-actions';
 import { CartContext } from 'components/cart-context';
 import LoadingDots from 'components/loading-dots';
-import { Cart, ShippingMethod } from 'lib/umbraco/types';
+import { Cart, ShippingMethodWithRates } from 'lib/umbraco/types';
 import { useRouter } from 'next/navigation';
 import { useContext, useEffect, useState, useTransition } from 'react';
 import CheckoutRadioOption from './checkout-radio-option';
@@ -28,7 +28,7 @@ export default function CheckoutDeliveryStep({
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
-  const [shippingMethods, setShippingMethods] = useState<ShippingMethod[] | undefined>(undefined);
+  const [shippingMethods, setShippingMethods] = useState<ShippingMethodWithRates[] | undefined>(undefined);
   const [selectedShippingMethod, setSelectedShippingMethod] = useState<string | undefined>(
     undefined
   );
@@ -37,7 +37,8 @@ export default function CheckoutDeliveryStep({
   const handleSubmit = () => {
     if (!currentCart || !selectedShippingMethod) return;
     startTransition(async () => {
-      const res = await doSetShippingMethod(selectedShippingMethod!);
+      const parts = selectedShippingMethod.split("__");
+      const res = await doSetShippingMethod(parts[0]!, parts.length > 1 ? parts[1] : undefined);
       const cart = res as Cart;
       if (cart) {
         setCurrentCart(cart);
@@ -51,11 +52,15 @@ export default function CheckoutDeliveryStep({
 
   useEffect(() => {
     if (currentCart) {
-      getShippingMethods().then((data) => {
-        const items = data as ShippingMethod[];
+      calculateShippingMethodRates().then((data) => {
+        const items = data as ShippingMethodWithRates[];
         if (items) {
           setShippingMethods(items);
-          setSelectedShippingMethod(currentCart.shippingMethod?.alias || items[0]!.alias);
+          if (currentCart.shippingMethod) {
+            setSelectedShippingMethod(currentCart.shippingOption ? `${currentCart.shippingMethod.alias}__${currentCart.shippingOption.id}` : currentCart.shippingMethod.alias);
+          } else {
+            setSelectedShippingMethod(items[0]!.rates && items[0]!.rates[0]!.option ? `${items[0]!.alias}__${items[0]!.rates![0]!.option}` : items[0]!.alias);
+          }
         } else {
           alert(data);
         }
@@ -88,13 +93,15 @@ export default function CheckoutDeliveryStep({
               onChange={setSelectedShippingMethod}
               className="flex flex-col gap-4"
             >
-              {shippingMethods.map((item) => (
-                <RadioGroup.Option key={item.id} value={item.alias}>
-                  {({ checked }) => (
-                    <CheckoutRadioOption title={item.name} price={item.price} checked={checked} />
-                  )}
-                </RadioGroup.Option>
-              ))}
+              {shippingMethods.map((item) => 
+                  item.rates!.map((rate) => (
+                    <RadioGroup.Option key={item.id} value={rate.option ? `${item.alias}__${rate.option.id}` : item.alias}>
+                      {({ checked }) => (
+                        <CheckoutRadioOption title={item.name} price={rate.value} checked={checked} />
+                      )}
+                    </RadioGroup.Option>
+                ))              
+              )}
             </RadioGroup>
           )}
         </div>

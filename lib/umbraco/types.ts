@@ -19,6 +19,7 @@ export type Cart = {
   billingCountry?: CodeRef;
   shippingCountry?: CodeRef;
   shippingMethod?: ShippingMethod;
+  shippingOption?: ShippingOption;
   paymentMethod?: PaymentMethod;
   isComplete: boolean;
 };
@@ -138,12 +139,19 @@ export type Country = {} & CodeRef;
 //   paymentProviderAlias: string
 // } & AliasRef;
 
-export type ShippingMethod = Omit<UmbracoCommerceShippingMethod, 'price'> & {
-  price?: Money;
+export type ShippingMethod = UmbracoCommerceShippingMethod;
+export type ShippingMethodWithRates = Omit<UmbracoCommerceShippingMethodWithRates, 'rates'> & {
+  rates?: ShippingRate[];
 };
+export type ShippingRate = {
+  option?: ShippingOption;
+  value?: Money;
+};
+export type ShippingOption = UmbracoCommerceShippingOption;
 
-export type PaymentMethod = Omit<UmbracoCommercePaymentMethod, 'price'> & {
-  price?: Money;
+export type PaymentMethod = UmbracoCommercePaymentMethod;
+export type PaymentMethodWithFee = Omit<UmbracoCommercePaymentMethodWithFee, 'fee'> & {
+  fee?: Money;
 };
 
 export type CartUpdate = {} & UmbracoCommerceOrderUpdate;
@@ -244,6 +252,7 @@ export type UmbracoCommercePaymentInfo = {
 export type UmbracoCommerceShippingInfo = {
   country?: UmbracoCommerceCodeEntity;
   shippingMethod?: UmbracoCommerceShippingMethod;
+  shippingOption?: UmbracoCommerceShippingOption;
   totalPrice?: UmbracoCommerceAdjustedPrice;
 };
 
@@ -358,6 +367,7 @@ export type UmbracoCommerceOrderUpdate = {
     sameAsBilling?: boolean;
   };
   shippingMethod?: string;
+  shippingOption?: string;
   paymentMethod?: string;
   redeem?: string;
   unredeem?: string;
@@ -369,7 +379,20 @@ export type UmbracoCommerceShippingMethod = {
   id: string;
   alias: string;
   name: string;
-  price?: UmbracoCommercePrice;
+};
+
+export type UmbracoCommerceShippingMethodWithRates = UmbracoCommerceShippingMethod & {
+  rates?: UmbracoCommerceShippingRate[];
+};
+
+export type UmbracoCommerceShippingRate = {
+  option?: UmbracoCommerceShippingOption;
+  value: UmbracoCommercePrice;
+};
+
+export type UmbracoCommerceShippingOption = {
+  id: string;
+  name: string;
 };
 
 export type UmbracoCommercePaymentMethod = {
@@ -377,7 +400,10 @@ export type UmbracoCommercePaymentMethod = {
   alias: string;
   name: string;
   paymentProviderAlias: string;
-  price?: UmbracoCommercePrice;
+};
+
+export type UmbracoCommercePaymentMethodWithFee = UmbracoCommercePaymentMethod & {
+  fee?: UmbracoCommercePrice;
 };
 
 export type UmbracoCommerceCheckoutToken = {

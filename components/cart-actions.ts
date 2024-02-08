@@ -3,6 +3,8 @@
 import {
   addToCart,
   createCart,
+  calculatePaymentMethodFees as doCalculatePaymentMethodFees,
+  calculateShippingMethodRates as doCalculateShippingMethodRates,
   confirmInlineCheckout as doConfirmInlineCheckout,
   getCart as doGetCart,
   getPaymentMethods as doGetPaymentMethods,
@@ -17,7 +19,9 @@ import {
   Cart,
   CartUpdate,
   PaymentMethod,
+  PaymentMethodWithFee,
   ShippingMethod,
+  ShippingMethodWithRates,
   UmbracoCommerceCheckoutToken,
   UmbracoCommerceInlineCheckout,
   UmbracoCommerceInlineCheckoutConfirmation
@@ -136,12 +140,21 @@ export const getShippingMethods = async (): Promise<Error | ShippingMethod[]> =>
   }
 };
 
-export const setShippingMethod = async (alias: string): Promise<Error | Cart> => {
+export const setShippingMethod = async (alias: string, option?:string): Promise<Error | Cart> => {
   const cart = await ensureCurrentCart();
   try {
-    return await doUpdateCart(cart.id, { shippingMethod: alias });
+    return await doUpdateCart(cart.id, { shippingMethod: alias, shippingOption: option });
   } catch (e) {
     return new Error('Error updating shipping method', { cause: e });
+  }
+};
+
+export const calculateShippingMethodRates = async (): Promise<Error | ShippingMethodWithRates[]> => {
+  const cart = await ensureCurrentCart();
+  try {
+    return await doCalculateShippingMethodRates(cart.id);
+  } catch (e) {
+    return new Error('Error calculating payment method fees', { cause: e });
   }
 };
 
@@ -160,6 +173,15 @@ export const setPaymentMethod = async (alias: string): Promise<Error | Cart> => 
     return await doUpdateCart(cart.id, { paymentMethod: alias });
   } catch (e) {
     return new Error('Error updating payment method', { cause: e });
+  }
+};
+
+export const calculatePaymentMethodFees = async (): Promise<Error | PaymentMethodWithFee[]> => {
+  const cart = await ensureCurrentCart();
+  try {
+    return await doCalculatePaymentMethodFees(cart.id);
+  } catch (e) {
+    return new Error('Error calculating shipping method rates', { cause: e });
   }
 };
 

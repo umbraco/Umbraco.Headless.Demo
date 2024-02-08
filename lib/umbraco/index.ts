@@ -8,10 +8,12 @@ import {
   Money,
   Page,
   PaymentMethod,
+  PaymentMethodWithFee,
   Product,
   ProductOption,
   ProductVariant,
   ShippingMethod,
+  ShippingMethodWithRates,
   UmbracoCommerceAmount,
   UmbracoCommerceCheckoutConfirmResponse,
   UmbracoCommerceCheckoutToken,
@@ -22,8 +24,10 @@ import {
   UmbracoCommerceOrderLine,
   UmbracoCommerceOrderUpdate,
   UmbracoCommercePaymentMethod,
+  UmbracoCommercePaymentMethodWithFee,
   UmbracoCommercePrice,
   UmbracoCommerceShippingMethod,
+  UmbracoCommerceShippingMethodWithRates,
   UmbracoCommerceVariantPropertyValue,
   UmbracoFormsResponse,
   UmbracoLink,
@@ -109,12 +113,12 @@ export async function umbracoFetch<T>(opts: {
     // console.log(url);
     // console.log(options.body);
 
-    // const txt = await result.text();
-    // console.log(url)
-    // console.log(txt)
-    // const body = JSON.parse(txt)
+    const txt = await result.text();
+    console.log(url)
+    console.log(txt)
+    const body = JSON.parse(txt)
 
-    const body = await result.json();
+    // const body = await result.json();
 
     // if (body && body.errors) {
     //   console.log(body.errors);
@@ -261,6 +265,7 @@ const reshapeOrder = (order: UmbracoCommerceOrder): Cart => {
     shippingMethod: order?.shippingInfo?.shippingMethod
       ? reshapeShippingMethod(order.shippingInfo.shippingMethod)
       : undefined,
+    shippingOption: order?.shippingInfo?.shippingOption,
     isComplete: order?.isFinalized || false
   };
 };
@@ -519,12 +524,32 @@ const reshapeShippingMethod = (
     id: entity.id,
     alias: entity.alias,
     name: entity.name,
-    price: entity.price ? reshapePrice(entity.price) : undefined
   };
 };
 
 const reshapeShippingMethods = (entities: UmbracoCommerceShippingMethod[]): ShippingMethod[] => {
   return <ShippingMethod[]>(entities || []).map((e) => reshapeShippingMethod(e)).filter((e) => !!e);
+};
+
+const reshapeShippingMethodWithRates = (
+  entity: UmbracoCommerceShippingMethodWithRates
+): ShippingMethodWithRates | undefined => {
+  if (!entity) {
+    return undefined;
+  }
+  return {
+    id: entity.id,
+    alias: entity.alias,
+    name: entity.name,
+    rates: entity.rates?.map((r) => ({
+      option: r.option,
+      value: r.value ? reshapePrice(r.value) : undefined
+    }))
+  };
+};
+
+const reshapeShippingMethodsWithRates = (entities: UmbracoCommerceShippingMethodWithRates[]): ShippingMethodWithRates[] => {
+  return <ShippingMethodWithRates[]>(entities || []).map((e) => reshapeShippingMethodWithRates(e)).filter((e) => !!e);
 };
 
 const reshapePaymentMethod = (entity: UmbracoCommercePaymentMethod): PaymentMethod | undefined => {
@@ -535,13 +560,29 @@ const reshapePaymentMethod = (entity: UmbracoCommercePaymentMethod): PaymentMeth
     id: entity.id,
     alias: entity.alias,
     name: entity.name,
-    paymentProviderAlias: entity.paymentProviderAlias,
-    price: entity.price ? reshapePrice(entity.price) : undefined
+    paymentProviderAlias: entity.paymentProviderAlias
   };
 };
 
 const reshapePaymentMethods = (entities: UmbracoCommercePaymentMethod[]): PaymentMethod[] => {
   return <PaymentMethod[]>(entities || []).map((e) => reshapePaymentMethod(e)).filter((e) => !!e);
+};
+
+const reshapePaymentMethodWithFee = (entity: UmbracoCommercePaymentMethodWithFee): PaymentMethodWithFee | undefined => {
+  if (!entity) {
+    return undefined;
+  }
+  return {
+    id: entity.id,
+    alias: entity.alias,
+    name: entity.name,
+    paymentProviderAlias: entity.paymentProviderAlias,
+    fee: entity.fee ? reshapePrice(entity.fee) : undefined
+  };
+};
+
+const reshapePaymentMethodsWithFee = (entities: UmbracoCommercePaymentMethodWithFee[]): PaymentMethodWithFee[] => {
+  return <PaymentMethodWithFee[]>(entities || []).map((e) => reshapePaymentMethodWithFee(e)).filter((e) => !!e);
 };
 
 export async function createCart(): Promise<Cart> {
@@ -857,6 +898,19 @@ export async function getShippingMethods(countryCode: string): Promise<ShippingM
   return reshapeShippingMethods(res.body);
 }
 
+export async function calculateShippingMethodRates(orderId: string): Promise<ShippingMethodWithRates[]> {
+  const res = await umbracoCommerceFetch<UmbracoCommerceShippingMethodWithRates[]>({
+    method: 'GET',
+    path: `/checkout/${orderId}/shippingmethods`
+  });
+
+  if (!res.body) {
+    return [];
+  }
+
+  return reshapeShippingMethodsWithRates(res.body);
+}
+
 export async function getPaymentMethods(countryCode: string): Promise<PaymentMethod[]> {
   const res = await umbracoCommerceFetch<UmbracoCommercePaymentMethod[]>({
     method: 'GET',
@@ -868,6 +922,23 @@ export async function getPaymentMethods(countryCode: string): Promise<PaymentMet
   }
 
   return reshapePaymentMethods(
+    res.body.filter((item) => {
+      return item.alias !== 'zeroValue';
+    })
+  );
+}
+
+export async function calculatePaymentMethodFees(orderId: string): Promise<PaymentMethodWithFee[]> {
+  const res = await umbracoCommerceFetch<UmbracoCommercePaymentMethodWithFee[]>({
+    method: 'GET',
+    path: `/checkout/${orderId}/paymentmethods`
+  });
+
+  if (!res.body) {
+    return [];
+  }
+
+  return reshapePaymentMethodsWithFee(
     res.body.filter((item) => {
       return item.alias !== 'zeroValue';
     })
