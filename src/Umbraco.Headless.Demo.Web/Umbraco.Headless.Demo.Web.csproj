@@ -7,16 +7,16 @@
 
   <ItemGroup>
     <PackageReference Include="Azure.Identity" Version="1.10.4" />
-    <PackageReference Include="Umbraco.Cms" Version="13.0.3" />
+    <PackageReference Include="Umbraco.Cms" Version="13.1.1" />
   </ItemGroup>
 
   <ItemGroup>
     <!-- Opt-in to app-local ICU to ensure consistent globalization APIs across different platforms -->
     <PackageReference Include="Microsoft.ICU.ICU4C.Runtime" Version="72.1.0.3" />
-    <PackageReference Include="Umbraco.Commerce" Version="13.0.0" />
-    <PackageReference Include="Umbraco.Commerce.Cms.Web.Api.Storefront" Version="13.0.0" />
+    <PackageReference Include="Umbraco.Commerce" Version="13.1.0-rc2" />
+    <PackageReference Include="Umbraco.Commerce.Cms.Web.Api.Storefront" Version="13.1.0-rc2" />
     <PackageReference Include="Umbraco.Commerce.PaymentProviders.Stripe" Version="13.0.0" />
-    <PackageReference Include="Umbraco.Commerce.Persistence.Sqlite" Version="13.0.0" />
+    <PackageReference Include="Umbraco.Commerce.Persistence.Sqlite" Version="13.1.0-rc2" />
     <PackageReference Include="Umbraco.Forms" Version="13.0.0" />
     <ProjectReference Include="..\Umbraco.Headless.Demo\Umbraco.Headless.Demo.csproj" />
     <RuntimeHostConfigurationOption Include="System.Globalization.AppLocalIcu" Value="72.1.0.3" Condition="$(RuntimeIdentifier.StartsWith('linux')) or $(RuntimeIdentifier.StartsWith('win')) or ('$(RuntimeIdentifier)' == '' and !$([MSBuild]::IsOSPlatform('osx')))" />
