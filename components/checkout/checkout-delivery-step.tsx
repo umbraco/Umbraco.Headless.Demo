@@ -97,7 +97,7 @@ export default function CheckoutDeliveryStep({
                   item.rates!.map((rate) => (
                     <RadioGroup.Option key={item.id} value={rate.option ? `${item.alias}__${rate.option.id}` : item.alias}>
                       {({ checked }) => (
-                        <CheckoutRadioOption title={item.name} price={rate.value} checked={checked} />
+                        <CheckoutRadioOption title={(item.name + (rate.option ? ` - ${rate.option.name}` : ''))} price={rate.value} checked={checked} />
                       )}
                     </RadioGroup.Option>
                 ))              
