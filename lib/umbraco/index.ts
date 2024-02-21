@@ -113,12 +113,12 @@ export async function umbracoFetch<T>(opts: {
     // console.log(url);
     // console.log(options.body);
 
-    const txt = await result.text();
-    console.log(url)
-    console.log(txt)
-    const body = JSON.parse(txt)
+    //const txt = await result.text();
+    //console.log(url)
+    //console.log(txt)
+    //const body = JSON.parse(txt)
 
-    // const body = await result.json();
+    const body = await result.json();
 
     // if (body && body.errors) {
     //   console.log(body.errors);
