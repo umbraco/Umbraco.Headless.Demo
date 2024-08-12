@@ -44,7 +44,7 @@ jobs:
                   -ResourceGroupName "${{ parameters.resourceGroupName }}" `
                   -ServerName "${{ parameters.sqlServerName }}" `
                   -DatabaseName "${{ parameters.databaseName }}"
-                Write-Host "Database removal complete"
+                Write-Host "Database removal completed"
             }
           preferredAzurePowerShellVersion: 11.2.0
 
@@ -75,13 +75,13 @@ jobs:
         azureSubscription:  ${{ parameters.azureSubscription }}
         ScriptType: "InlineScript"
         Inline: |
-          Write-Host "Scaling up database tier before importing..."
+          Write-Host "Scale up database tier before importing..."
           Set-AzSqlDatabase `
             -ResourceGroupName "${{ parameters.resourceGroupName }}" `
             -DatabaseName "${{ parameters.databaseName }}" `
             -ServerName "${{ parameters.sqlServerName }}" `
             -Edition "Standard" `
-            -RequestedServiceObjectiveName "S3"
+            -RequestedServiceObjectiveName "S4"
 
           Write-Host "Import database from .bacpac"
           $oneGBInBytes = 1 * 1024 * 1024 * 1024
@@ -118,9 +118,9 @@ jobs:
                 Write-Host "Get import status operation timed out. Retrying... ($retryCount)"
                 Start-Sleep -Seconds 10
             }
-          } while (($status.Status -eq "InProgress" -or $status.Status -eq "Pending") -and $loopCount -lt 200)
+          } while (($status.Status -eq "InProgress" -or $status.Status -eq "Pending") -and $loopCount -lt 220)
 
-          Write-Host "Scaling down database after importing..."
+          Write-Host "Scale down database after importing..."
           Set-AzSqlDatabase `
             -ResourceGroupName "${{ parameters.resourceGroupName }}" `
             -DatabaseName "${{ parameters.databaseName }}" `
