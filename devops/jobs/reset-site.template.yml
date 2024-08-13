@@ -84,12 +84,12 @@ jobs:
             -RequestedServiceObjectiveName "S4"
 
           Write-Host "Import database from .bacpac"
-          $oneGBInBytes = 1 * 1024 * 1024 * 1024
+          $dbMaxSizeBytes = 268435456000
           $importRequest = New-AzSqlDatabaseImport `
             -ResourceGroupName "${{ parameters.resourceGroupName }}" `
             -ServerName "${{ parameters.sqlServerName }}" `
             -DatabaseName "${{ parameters.databaseName }}" `
-            -DatabaseMaxSizeBytes $oneGBInBytes `
+            -DatabaseMaxSizeBytes $dbMaxSizeBytes `
             -StorageKeyType "StorageAccessKey" `
             -StorageUri "$env:DB_BACPAC_URL" `
             -Edition "Basic" `
@@ -121,12 +121,14 @@ jobs:
           } while (($status.Status -eq "InProgress" -or $status.Status -eq "Pending") -and $loopCount -lt 220)
 
           Write-Host "Scale down database after importing..."
+          $oneGBInBytes = 1 * 1024 * 1024 * 1024
           Set-AzSqlDatabase `
             -ResourceGroupName "${{ parameters.resourceGroupName }}" `
             -DatabaseName "${{ parameters.databaseName }}" `
             -ServerName "${{ parameters.sqlServerName }}" `
             -Edition "Basic" `
-            -RequestedServiceObjectiveName "Basic"
+            -RequestedServiceObjectiveName "Basic" `
+            -MaxSizeBytes $oneGBInBytes
 
           # Check if the import was successful
           if ($status.Status -eq "Succeeded") {
