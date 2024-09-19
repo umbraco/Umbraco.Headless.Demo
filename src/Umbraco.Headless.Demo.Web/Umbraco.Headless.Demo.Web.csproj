@@ -1,23 +1,34 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <UserSecretsId>88a45d3d-6c0f-40a5-84c7-fc8a87c0af06</UserSecretsId>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <CopyRazorGenerateFilesToPublishDirectory>true</CopyRazorGenerateFilesToPublishDirectory>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <RazorCompileOnBuild>false</RazorCompileOnBuild>
+    <RazorCompileOnPublish>false</RazorCompileOnPublish>
+    <UserSecretsId>0cbebd9d-2084-4e96-afab-d01fc5aaac72</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Azure.Identity" Version="1.10.4" />
-    <PackageReference Include="Umbraco.Cms" Version="13.1.1" />
+    <PackageReference Include="Azure.Identity" Version="1.12.0" />
+    <PackageReference Include="Umbraco.Cms" Version="14.2.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <!-- Opt-in to app-local ICU to ensure consistent globalization APIs across different platforms -->
     <PackageReference Include="Microsoft.ICU.ICU4C.Runtime" Version="72.1.0.3" />
-    <PackageReference Include="Umbraco.Commerce" Version="13.1.0" />
-    <PackageReference Include="Umbraco.Commerce.Cms.Web.Api.Storefront" Version="13.1.0" />
-    <PackageReference Include="Umbraco.Commerce.PaymentProviders.Stripe" Version="13.0.0" />
-    <PackageReference Include="Umbraco.Commerce.Persistence.Sqlite" Version="13.1.0" />
-    <PackageReference Include="Umbraco.Forms" Version="13.0.0" />
+    <PackageReference Include="Umbraco.Commerce" Version="14.0.0" />
+    <PackageReference Include="Umbraco.Commerce.Cms.Web.Api.Storefront" Version="14.0.0" />
+    <PackageReference Include="Umbraco.Commerce.PaymentProviders.Stripe" Version="14.0.0" />
+    <PackageReference Include="Umbraco.Commerce.Persistence.Sqlite" Version="14.0.0" />
+    <PackageReference Include="Umbraco.Forms" Version="14.1.3" />
     <ProjectReference Include="..\Umbraco.Headless.Demo\Umbraco.Headless.Demo.csproj" />
     <RuntimeHostConfigurationOption Include="System.Globalization.AppLocalIcu" Value="72.1.0.3" Condition="$(RuntimeIdentifier.StartsWith('linux')) or $(RuntimeIdentifier.StartsWith('win')) or ('$(RuntimeIdentifier)' == '' and !$([MSBuild]::IsOSPlatform('osx')))" />
   </ItemGroup>
@@ -26,27 +37,9 @@
     <None Include="umbraco\Data\Umbraco.sqlite.db">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="config\lang\en-GB.user.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="config\lang\en-US.user.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <Content Include="wwwroot\media\**\*">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
 
-  <PropertyGroup>
-    <!-- Razor files are needed for the backoffice to work correctly -->
-    <CopyRazorGenerateFilesToPublishDirectory>true</CopyRazorGenerateFilesToPublishDirectory>
-  </PropertyGroup>
-
-  <PropertyGroup>
-    <!-- Remove RazorCompileOnBuild and RazorCompileOnPublish when not using ModelsMode InMemoryAuto -->
-    <RazorCompileOnBuild>false</RazorCompileOnBuild>
-    <RazorCompileOnPublish>false</RazorCompileOnPublish>
-    <UserSecretsId>0cbebd9d-2084-4e96-afab-d01fc5aaac72</UserSecretsId>
-  </PropertyGroup>
-  
 </Project>
