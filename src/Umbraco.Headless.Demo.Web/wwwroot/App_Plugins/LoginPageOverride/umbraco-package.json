@@ -1,0 +1,17 @@
+﻿{
+  "alias": "loginpage.override.extensions",
+  "name": "Login Page override extensions",
+  "version": "1.0.0",
+  "allowPublicAccess": true,
+  "extensions": [
+    {
+      "type": "localization",
+      "alias": "loginpage.override.extensions.localize.enus",
+      "name": "English",
+      "js": "/App_Plugins/LoginPageOverride/en-us.js",
+      "meta": {
+        "culture": "en-US"
+      }
+    }
+  ]
+}
