@@ -7,11 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Umbraco.Cms.Core" Version="14.2.0" />
-    <PackageReference Include="Umbraco.Cms.Web.Website" Version="14.2.0" />
-    <PackageReference Include="Umbraco.Commerce.Cms.Startup" Version="14.0.0" />
-    <PackageReference Include="Umbraco.Commerce.Cms.Web.Api.Storefront" Version="14.0.0" />
-    <PackageReference Include="Umbraco.Commerce.Persistence.Sqlite" Version="14.0.0" />
+    <PackageReference Include="Umbraco.Cms.Core" Version="14.3.4" />
+    <PackageReference Include="Umbraco.Cms.Web.Website" Version="14.3.4" />
+    <PackageReference Include="Umbraco.Commerce.Cms.Startup" Version="14.4.0" />
+    <PackageReference Include="Umbraco.Commerce.Cms.Web.Api.Storefront" Version="14.4.0" />
+    <PackageReference Include="Umbraco.Commerce.Persistence.Sqlite" Version="14.4.0" />
   </ItemGroup>
 
 </Project>

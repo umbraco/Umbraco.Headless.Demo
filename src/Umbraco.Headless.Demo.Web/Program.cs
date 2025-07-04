@@ -14,11 +14,14 @@ WebApplication app = builder.Build();
 
 await app.BootUmbracoAsync();
 
-app.UseHttpsRedirection();
 
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
+}
+else
+{
+    app.UseHttpsRedirection();
 }
 
 app.UseUmbraco()
@@ -32,5 +35,5 @@ app.UseUmbraco()
         u.UseBackOfficeEndpoints();
         u.UseWebsiteEndpoints();
     });
-    
+
 await app.RunAsync();
