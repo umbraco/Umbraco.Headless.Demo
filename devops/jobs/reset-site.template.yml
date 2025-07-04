@@ -84,7 +84,7 @@ jobs:
           #   -RequestedServiceObjectiveName "S4"
 
           Write-Host "StorageUri: $env:DB_BACPAC_URL"
-          Write-Host "Using storage access key with $env: $($env:HEADLESS_SECRET_STORAGE_ACCESS_KEY.Substring(0, 5))******"
+          Write-Host "Using storage access key: $($env:HEADLESS_SECRET_STORAGE_ACCESS_KEY.Substring(0, 5))******"
           Write-Host "Using database admin: $($env:HEADLESS_SECRET_DATABASE_ADMIN.Substring(0, 3))******"
 
           Write-Host "Import database from .bacpac"
