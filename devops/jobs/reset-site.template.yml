@@ -83,6 +83,10 @@ jobs:
           #   -Edition "Standard" `
           #   -RequestedServiceObjectiveName "S4"
 
+          Write-Host "StorageUri: $env:DB_BACPAC_URL"
+          Write-Host "Using storage access key with $env: $($env:HEADLESS_SECRET_STORAGE_ACCESS_KEY.Substring(0, 5))******"
+          Write-Host "Using database admin: $($env:HEADLESS_SECRET_DATABASE_ADMIN.Substring(0, 3))******"
+
           Write-Host "Import database from .bacpac"
           $dbMaxSizeBytes = 268435456000
           $importRequest = New-AzSqlDatabaseImport `
@@ -94,10 +98,12 @@ jobs:
             -StorageUri "$env:DB_BACPAC_URL" `
             -Edition "Standard" `
             -ServiceObjectiveName "S4" `
-            -StorageKey "$(HEADLESS_SECRET_STORAGE_ACCESS_KEY)" `
-            -AdministratorLogin "$(HEADLESS_SECRET_DATABASE_ADMIN)" `
-            -AdministratorLoginPassword (ConvertTo-SecureString -String "$(HEADLESS_SECRET_DATABASE_PASSWORD)" -AsPlainText -Force)
-          
+            -StorageKey $env:HEADLESS_SECRET_STORAGE_ACCESS_KEY
+            -AdministratorLogin $env:HEADLESS_SECRET_DATABASE_ADMIN
+            -AdministratorLoginPassword (ConvertTo-SecureString -String $env:HEADLESS_SECRET_DATABASE_PASSWORD -AsPlainText -Force)
+
+          Write-Host "Import OperationStatusLink: $($importRequest.OperationStatusLink)"
+    
           # Wait for the import to complete
           $loopCount = 0;
           $maxRetry = 2;
@@ -138,7 +144,13 @@ jobs:
               Write-Host "Error: $($status.ErrorMessage)"
               exit 1 # mark task as failed
           }
-        preferredAzurePowerShellVersion: 11.2.0   
+        preferredAzurePowerShellVersion: 11.2.0
+        env:
+          HEADLESS_SECRET_STORAGE_ACCESS_KEY: $(HEADLESS_SECRET_STORAGE_ACCESS_KEY)
+          HEADLESS_SECRET_DATABASE_ADMIN: $(HEADLESS_SECRET_DATABASE_ADMIN)
+          HEADLESS_SECRET_DATABASE_PASSWORD: $(HEADLESS_SECRET_DATABASE_PASSWORD)
+          DB_BACPAC_URL: $(DB_BACPAC_URL)
+
 
     - task: AzureAppServiceManage@0
       displayName: "Start App Service - ${{ parameters.environment }}"
