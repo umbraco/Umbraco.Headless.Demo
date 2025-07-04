@@ -75,13 +75,13 @@ jobs:
         azureSubscription:  ${{ parameters.azureSubscription }}
         ScriptType: "InlineScript"
         Inline: |
-          Write-Host "Scale up database tier before importing..."
-          Set-AzSqlDatabase `
-            -ResourceGroupName "${{ parameters.resourceGroupName }}" `
-            -DatabaseName "${{ parameters.databaseName }}" `
-            -ServerName "${{ parameters.sqlServerName }}" `
-            -Edition "Standard" `
-            -RequestedServiceObjectiveName "S4"
+          # Write-Host "Scale up database tier before importing..."
+          # Set-AzSqlDatabase `
+          #   -ResourceGroupName "${{ parameters.resourceGroupName }}" `
+          #   -DatabaseName "${{ parameters.databaseName }}" `
+          #   -ServerName "${{ parameters.sqlServerName }}" `
+          #   -Edition "Standard" `
+          #   -RequestedServiceObjectiveName "S4"
 
           Write-Host "Import database from .bacpac"
           $dbMaxSizeBytes = 268435456000
@@ -92,8 +92,8 @@ jobs:
             -DatabaseMaxSizeBytes $dbMaxSizeBytes `
             -StorageKeyType "StorageAccessKey" `
             -StorageUri "$env:DB_BACPAC_URL" `
-            -Edition "Basic" `
-            -ServiceObjectiveName "Basic" `
+            -Edition "Standard" `
+            -ServiceObjectiveName "S4" `
             -StorageKey "$(HEADLESS_SECRET_STORAGE_ACCESS_KEY)" `
             -AdministratorLogin "$(HEADLESS_SECRET_DATABASE_ADMIN)" `
             -AdministratorLoginPassword (ConvertTo-SecureString -String "$(HEADLESS_SECRET_DATABASE_PASSWORD)" -AsPlainText -Force)
