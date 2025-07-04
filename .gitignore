@@ -490,3 +490,8 @@ infrastructure/headless-demo/backend/backend.env.tfvars
 /infrastructure/headless-demo/backend/backend.env.tfvars
 
 .idea
+/src/Umbraco.Headless.Demo/appsettings-schema.json
+/src/Umbraco.Headless.Demo/appsettings-schema.Umbraco.Cms.json
+/src/Umbraco.Headless.Demo/appsettings-schema.Umbraco.Licenses.json
+/src/Umbraco.Headless.Demo/umbraco-package-schema.json
+/src/Umbraco.Headless.Demo.Web/umbraco-package-schema.json
