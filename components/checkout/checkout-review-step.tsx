@@ -198,7 +198,10 @@ export default function CheckoutReviewStep({
                 <div className="flex justify-between border-b border-umb-gray p-4 lg:p-8">
                   <div className="flex-1">
                     <div className="text-lg font-bold lg:text-xl">Shipping Fee</div>
-                    <p className="mt-1">{currentCart.shippingMethod!.name}</p>
+                    <p className="mt-1">
+                      {currentCart.shippingMethod!.name}
+                      {currentCart.shippingOption ? ` - ${currentCart.shippingOption.name}` : ''}
+                    </p>
                   </div>
                   <div>
                     <Price
