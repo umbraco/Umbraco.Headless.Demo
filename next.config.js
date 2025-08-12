@@ -20,5 +20,10 @@ module.exports = {
         pathname: '/media/**'
       }
     ]
+  },
+  swcMinify: false,
+  webpack: (config) => {
+    config.optimization.minimize = false;
+    return config;
   }
 };
