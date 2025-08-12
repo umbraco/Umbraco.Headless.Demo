@@ -1,4 +1,3 @@
-
 import {
   Cart,
   CartItem,
@@ -523,7 +522,7 @@ const reshapeShippingMethod = (
   return {
     id: entity.id,
     alias: entity.alias,
-    name: entity.name,
+    name: entity.name
   };
 };
 
@@ -548,8 +547,12 @@ const reshapeShippingMethodWithRates = (
   };
 };
 
-const reshapeShippingMethodsWithRates = (entities: UmbracoCommerceShippingMethodWithRates[]): ShippingMethodWithRates[] => {
-  return <ShippingMethodWithRates[]>(entities || []).map((e) => reshapeShippingMethodWithRates(e)).filter((e) => !!e);
+const reshapeShippingMethodsWithRates = (
+  entities: UmbracoCommerceShippingMethodWithRates[]
+): ShippingMethodWithRates[] => {
+  return <ShippingMethodWithRates[]>(
+    (entities || []).map((e) => reshapeShippingMethodWithRates(e)).filter((e) => !!e)
+  );
 };
 
 const reshapePaymentMethod = (entity: UmbracoCommercePaymentMethod): PaymentMethod | undefined => {
@@ -568,7 +571,9 @@ const reshapePaymentMethods = (entities: UmbracoCommercePaymentMethod[]): Paymen
   return <PaymentMethod[]>(entities || []).map((e) => reshapePaymentMethod(e)).filter((e) => !!e);
 };
 
-const reshapePaymentMethodWithFee = (entity: UmbracoCommercePaymentMethodWithFee): PaymentMethodWithFee | undefined => {
+const reshapePaymentMethodWithFee = (
+  entity: UmbracoCommercePaymentMethodWithFee
+): PaymentMethodWithFee | undefined => {
   if (!entity) {
     return undefined;
   }
@@ -581,8 +586,12 @@ const reshapePaymentMethodWithFee = (entity: UmbracoCommercePaymentMethodWithFee
   };
 };
 
-const reshapePaymentMethodsWithFee = (entities: UmbracoCommercePaymentMethodWithFee[]): PaymentMethodWithFee[] => {
-  return <PaymentMethodWithFee[]>(entities || []).map((e) => reshapePaymentMethodWithFee(e)).filter((e) => !!e);
+const reshapePaymentMethodsWithFee = (
+  entities: UmbracoCommercePaymentMethodWithFee[]
+): PaymentMethodWithFee[] => {
+  return <PaymentMethodWithFee[]>(
+    (entities || []).map((e) => reshapePaymentMethodWithFee(e)).filter((e) => !!e)
+  );
 };
 
 export async function createCart(): Promise<Cart> {
@@ -898,7 +907,9 @@ export async function getShippingMethods(countryCode: string): Promise<ShippingM
   return reshapeShippingMethods(res.body);
 }
 
-export async function calculateShippingMethodRates(orderId: string): Promise<ShippingMethodWithRates[]> {
+export async function calculateShippingMethodRates(
+  orderId: string
+): Promise<ShippingMethodWithRates[]> {
   const res = await umbracoCommerceFetch<UmbracoCommerceShippingMethodWithRates[]>({
     method: 'GET',
     path: `/checkout/${orderId}/shippingmethods`
@@ -991,8 +1002,7 @@ export async function submitStockNotificationForm(
   email: string,
   productReference: string
 ): Promise<UmbracoFormsResponse> {
-
-  const idParts = productReference.split(':')
+  const idParts = productReference.split(':');
 
   const res = await umbracoFormsFetch<UmbracoFormsResponse>({
     method: 'POST',
@@ -1008,14 +1018,9 @@ export async function submitStockNotificationForm(
   });
 
   return res.body;
-
 }
 
-export async function submitForm(
-  formId: string,
-  data: any
-): Promise<UmbracoFormsResponse> {
-
+export async function submitForm(formId: string, data: any): Promise<UmbracoFormsResponse> {
   const res = await umbracoFormsFetch<UmbracoFormsResponse>({
     method: 'POST',
     path: `/entries/${formId}`,
@@ -1026,5 +1031,4 @@ export async function submitForm(
   });
 
   return res.body;
-
 }

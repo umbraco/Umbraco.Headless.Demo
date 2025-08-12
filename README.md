@@ -1,5 +1,7 @@
 # Umbraco Headless Demo - Frontend
 
+Demo site: https://headless-demo.umbraco.com/
+
 This branch represents the frontend of the [Umbraco Headless Demo](https://github.com/umbraco/Umbraco.Headless.Demo) and consists of a [Next.js](https://nextjs.org/) application fully configured with common features, including:
 
 - Next.js App Router
@@ -15,9 +17,9 @@ This branch represents the frontend of the [Umbraco Headless Demo](https://githu
 
 Clone or download this branch locally
 
-````
+```
 git clone --branch frontend/main https://github.com/umbraco/Umbraco.Headless.Demo.git frontend
-````
+```
 
 You will need to use the environment variables [defined in `.env.example`](.env.example) to configure this project. It's recommended you use [Vercel Environment Variables](https://vercel.com/docs/concepts/projects/environment-variables) for this, but a `.env` file is all that is necessary.
 
@@ -42,9 +44,8 @@ This project is designed to be deployed to [Vercel](https://vercel.com). Checkou
 
 ## Known Issues
 
-* `Error: invariant expected app router to be mounted` or `Method expects to have requestAsyncStorage, none available`  
+- `Error: invariant expected app router to be mounted` or `Method expects to have requestAsyncStorage, none available`  
   If you are running this project locally on Windows and experience either of these two errors, you'll want to run the `npm` run commands thought [WSL](https://learn.microsoft.com/en-us/windows/wsl/install). There appear to be some issues running on Windows but running through the Linux subsystem works fine.
-
 
 ## License
 

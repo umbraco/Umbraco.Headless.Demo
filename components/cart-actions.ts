@@ -31,7 +31,7 @@ import { cookies } from 'next/headers';
 export const setCurrentCart = async (cart: Cart | undefined): Promise<Cart | undefined> => {
   let cartId = cookies().get('cartId')?.value;
   if (cart && cart.id !== cartId) {
-    cookies().set('cartId', cart.id, { expires: Date.now() + (60 * 60 * 1000) }); // One hour max
+    cookies().set('cartId', cart.id, { expires: Date.now() + 60 * 60 * 1000 }); // One hour max
   } else if (!cart && cartId) {
     cookies().delete('cartId');
   }
@@ -140,7 +140,7 @@ export const getShippingMethods = async (): Promise<Error | ShippingMethod[]> =>
   }
 };
 
-export const setShippingMethod = async (alias: string, option?:string): Promise<Error | Cart> => {
+export const setShippingMethod = async (alias: string, option?: string): Promise<Error | Cart> => {
   const cart = await ensureCurrentCart();
   try {
     return await doUpdateCart(cart.id, { shippingMethod: alias, shippingOption: option });
@@ -149,7 +149,9 @@ export const setShippingMethod = async (alias: string, option?:string): Promise<
   }
 };
 
-export const calculateShippingMethodRates = async (): Promise<Error | ShippingMethodWithRates[]> => {
+export const calculateShippingMethodRates = async (): Promise<
+  Error | ShippingMethodWithRates[]
+> => {
   const cart = await ensureCurrentCart();
   try {
     return await doCalculateShippingMethodRates(cart.id);

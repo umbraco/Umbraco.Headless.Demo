@@ -28,7 +28,9 @@ export default function CheckoutDeliveryStep({
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
-  const [shippingMethods, setShippingMethods] = useState<ShippingMethodWithRates[] | undefined>(undefined);
+  const [shippingMethods, setShippingMethods] = useState<ShippingMethodWithRates[] | undefined>(
+    undefined
+  );
   const [selectedShippingMethod, setSelectedShippingMethod] = useState<string | undefined>(
     undefined
   );
@@ -37,7 +39,7 @@ export default function CheckoutDeliveryStep({
   const handleSubmit = () => {
     if (!currentCart || !selectedShippingMethod) return;
     startTransition(async () => {
-      const parts = selectedShippingMethod.split("__");
+      const parts = selectedShippingMethod.split('__');
       const res = await doSetShippingMethod(parts[0]!, parts.length > 1 ? parts[1] : undefined);
       const cart = res as Cart;
       if (cart) {
@@ -57,9 +59,17 @@ export default function CheckoutDeliveryStep({
         if (items) {
           setShippingMethods(items);
           if (currentCart.shippingMethod) {
-            setSelectedShippingMethod(currentCart.shippingOption ? `${currentCart.shippingMethod.alias}__${currentCart.shippingOption.id}` : currentCart.shippingMethod.alias);
+            setSelectedShippingMethod(
+              currentCart.shippingOption
+                ? `${currentCart.shippingMethod.alias}__${currentCart.shippingOption.id}`
+                : currentCart.shippingMethod.alias
+            );
           } else {
-            setSelectedShippingMethod(items[0]!.rates && items[0]!.rates[0]!.option ? `${items[0]!.alias}__${items[0]!.rates![0]!.option}` : items[0]!.alias);
+            setSelectedShippingMethod(
+              items[0]!.rates && items[0]!.rates[0]!.option
+                ? `${items[0]!.alias}__${items[0]!.rates![0]!.option}`
+                : items[0]!.alias
+            );
           }
         } else {
           alert(data);
@@ -93,14 +103,21 @@ export default function CheckoutDeliveryStep({
               onChange={setSelectedShippingMethod}
               className="flex flex-col gap-4"
             >
-              {shippingMethods.map((item) => 
-                  item.rates!.map((rate) => (
-                    <RadioGroup.Option key={item.id} value={rate.option ? `${item.alias}__${rate.option.id}` : item.alias}>
-                      {({ checked }) => (
-                        <CheckoutRadioOption title={(item.name + (rate.option ? ` - ${rate.option.name}` : ''))} price={rate.value} checked={checked} />
-                      )}
-                    </RadioGroup.Option>
-                ))              
+              {shippingMethods.map((item) =>
+                item.rates!.map((rate) => (
+                  <RadioGroup.Option
+                    key={item.id}
+                    value={rate.option ? `${item.alias}__${rate.option.id}` : item.alias}
+                  >
+                    {({ checked }) => (
+                      <CheckoutRadioOption
+                        title={item.name + (rate.option ? ` - ${rate.option.name}` : '')}
+                        price={rate.value}
+                        checked={checked}
+                      />
+                    )}
+                  </RadioGroup.Option>
+                ))
               )}
             </RadioGroup>
           )}

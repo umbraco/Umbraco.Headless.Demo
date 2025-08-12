@@ -2,7 +2,10 @@
 
 import { RadioGroup } from '@headlessui/react';
 import { CheckoutStep } from 'app/checkout/steps';
-import { calculatePaymentMethodFees, setPaymentMethod as doSetPaymentMethod } from 'components/cart-actions';
+import {
+  calculatePaymentMethodFees,
+  setPaymentMethod as doSetPaymentMethod
+} from 'components/cart-actions';
 import { CartContext } from 'components/cart-context';
 import LoadingDots from 'components/loading-dots';
 import { Cart, PaymentMethodWithFee } from 'lib/umbraco/types';
@@ -25,7 +28,9 @@ export default function CheckoutPaymentStep({
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
-  const [paymentMethods, setPaymentMethods] = useState<PaymentMethodWithFee[] | undefined>(undefined);
+  const [paymentMethods, setPaymentMethods] = useState<PaymentMethodWithFee[] | undefined>(
+    undefined
+  );
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string | undefined>(undefined);
   const [isLoading, setLoading] = useState(true);
 
