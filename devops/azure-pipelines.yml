@@ -1,8 +1,9 @@
 trigger:
+  batch: true
   branches:
     include:
-      - main
-      - dev
+      - frontend/main
+      - frontend/dev
 
 pool:
   vmImage: ubuntu-latest
