@@ -313,7 +313,7 @@ export default function CheckoutDetailsStep({
                   Country
                 </label>
                 <select
-                  name="country"
+                  name="billingCountry"
                   className="w-full rounded border-gray-300 text-lg outline-umb-blue placeholder:text-gray-300"
                   placeholder="Your country"
                   required={true}
