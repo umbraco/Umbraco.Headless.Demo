@@ -1,0 +1,27 @@
+trigger:
+  branches:
+    include:
+      - main
+      - dev
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  # Pipeline to trigger the fork repository's synchronization process
+  # Override this URL in the pipeline UI or variable groups
+  FORK_REPOSITORY_URL: 'https://api.github.com/repos/YOUR_USERNAME/YOUR_FORK'
+
+steps:
+  - task: Bash@3
+    displayName: 'Trigger fork repository synchronization'
+    inputs:
+      targetType: inline
+      script: |
+        echo "Triggering fork synchronization for branch: $(Build.SourceBranchName)"
+
+        curl -X POST \
+          -H "Accept: application/vnd.github+json" \
+          -H "Authorization: token $(FORK_ACCESS_TOKEN)" \
+          $(FORK_REPOSITORY_URL)/dispatches \
+          -d "{\"event_type\":\"sync-request\", \"client_payload\": {\"branch\": \"$(Build.SourceBranchName)\"}}"
