@@ -23,11 +23,24 @@ steps:
         echo "FORK_REPOSITORY_URL: $FORK_REPOSITORY_URL"
         echo "Build.SourceBranchName: $(Build.SourceBranchName)"
 
-        curl -X POST \
+        response=$(curl -s -w "HTTPSTATUS:%{http_code}" -X POST \
           -H "Accept: application/vnd.github+json" \
-          -H "Authorization: token $FORK_ACCESS_TOKEN" \
+          -H "Authorization: Bearer $FORK_ACCESS_TOKEN" \
           $FORK_REPOSITORY_URL/dispatches \
-          -d "{\"event_type\":\"sync-request\", \"client_payload\": {\"branch\": \"$(Build.SourceBranchName)\"}}"
+          -d "{\"event_type\":\"sync-request\", \"client_payload\": {\"branch\": \"$(Build.SourceBranchName)\"}}")
+
+        http_code=$(echo $response | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
+        body=$(echo $response | sed -e 's/HTTPSTATUS\:.*//g')
+
+        echo "Response HTTP code: $http_code"
+        echo "Response body: $body"
+
+        if [ "$http_code" -eq 204 ]; then
+          echo "✅ Successfully triggered fork synchronization"
+        else
+          echo "❌ Failed to trigger fork synchronization (HTTP $http_code)"
+          exit 1
+        fi
     env:
       FORK_ACCESS_TOKEN: $(FORK_ACCESS_TOKEN)
       FORK_REPOSITORY_URL: $(FORK_REPOSITORY_URL)
