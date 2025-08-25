@@ -11,11 +11,6 @@ variables:
   # Reference variable group containing secrets and configuration
   - group: 'headless-demo-frontend-fork'
 
-  # Pipeline to trigger the fork repository's synchronization process
-  # Override this URL in the pipeline UI or variable groups
-  - name: FORK_REPOSITORY_URL
-    value: 'https://api.github.com/repos/YOUR_USERNAME/YOUR_FORK'
-
 steps:
   - task: Bash@3
     displayName: 'Trigger fork repository synchronization'
