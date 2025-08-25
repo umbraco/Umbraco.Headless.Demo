@@ -26,6 +26,9 @@ steps:
 
         curl -X POST \
           -H "Accept: application/vnd.github+json" \
-          -H "Authorization: token $(FORK_ACCESS_TOKEN)" \
-          $(FORK_REPOSITORY_URL)/dispatches \
+          -H "Authorization: token $FORK_ACCESS_TOKEN" \
+          $FORK_REPOSITORY_URL/dispatches \
           -d "{\"event_type\":\"sync-request\", \"client_payload\": {\"branch\": \"$(Build.SourceBranchName)\"}}"
+    env:
+      FORK_ACCESS_TOKEN: $(FORK_ACCESS_TOKEN)
+      FORK_REPOSITORY_URL: $(FORK_REPOSITORY_URL)
