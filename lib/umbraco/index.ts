@@ -346,20 +346,20 @@ const reshapeProduct = (
     return undefined;
   }
 
-  let nodeAlias = node.route.path
+  const nodeAlias = node.route.path
     .replace(/^\/+|\/+$/g, '')
     .split('/')
     .pop();
-  let nodeHandle = nodeAlias || node.id;
+  const nodeHandle = nodeAlias || node.id;
 
   let currency = 'EUR';
   let minPrice = 0;
   let maxPrice = 0;
 
-  let metaTitle = node.properties['metaTitle']?.toString() || node.name;
-  let metaDescription = node.properties['metaDescription']?.toString();
+  const metaTitle = node.properties['metaTitle']?.toString() || node.name;
+  const metaDescription = node.properties['metaDescription']?.toString();
 
-  let product = <Product>{
+  const product = <Product>{
     id: node.id,
     handle: nodeHandle,
     title: node.name,
@@ -396,7 +396,7 @@ const reshapeProduct = (
     ];
   }
 
-  let variants = node.properties['variants'] as UmbracoCommerceVariantPropertyValue;
+  const variants = node.properties['variants'] as UmbracoCommerceVariantPropertyValue;
   if (variants) {
     product.options = variants.attributes.map((attr) => ({
       alias: attr.alias,
@@ -404,7 +404,7 @@ const reshapeProduct = (
       values: attr.values.map((v) => ({ alias: v.alias, name: v.name }))
     }));
 
-    let productVariants = <ProductVariant[]>[];
+    const productVariants = <ProductVariant[]>[];
 
     variants.items.forEach((itm) => {
       if (itm.content) {
@@ -441,7 +441,7 @@ const reshapeProduct = (
     }
   }
 
-  let media = (node.properties['images'] || node.properties['image']) as UmbracoMedia[];
+  const media = (node.properties['images'] || node.properties['image']) as UmbracoMedia[];
   if (media.length > 0) {
     var images = media.map((m) => reshapeImage(m));
     product.featuredImage = images[0]!;
@@ -461,17 +461,17 @@ const reshapeProducts = (nodes: UmbracoNode[]): Product[] => {
 };
 
 const reshapePage = (node: UmbracoNode): Page => {
-  let nodeAlias = node.route.path
+  const nodeAlias = node.route.path
     .replace(/^\/+|\/+$/g, '')
     .split('/')
     .pop();
-  let nodeHandle = nodeAlias || node.id;
+  const nodeHandle = nodeAlias || node.id;
 
-  let metaTitle = node.properties['metaTitle']?.toString() || node.name;
-  let metaDescription = node.properties['metaDescription']?.toString();
+  const metaTitle = node.properties['metaTitle']?.toString() || node.name;
+  const metaDescription = node.properties['metaDescription']?.toString();
 
-  let sidebarTitle = node.properties['sidebarTitle']?.toString() || node.name;
-  let sidebarDescription =
+  const sidebarTitle = node.properties['sidebarTitle']?.toString() || node.name;
+  const sidebarDescription =
     node.properties['sidebarDescription']?.toString() || node.properties['summary']?.toString();
 
   return {
@@ -719,7 +719,7 @@ export async function getMenu(handle: string): Promise<Menu[]> {
     tags: [VALIDATION_TAGS.collections, VALIDATION_TAGS.products, VALIDATION_TAGS.pages]
   });
 
-  let menu = res.body?.properties[`${handle}Menu`] as UmbracoLink[];
+  const menu = res.body?.properties[`${handle}Menu`] as UmbracoLink[];
 
   return (
     menu?.map((itm) => {
@@ -1031,4 +1031,23 @@ export async function submitForm(formId: string, data: any): Promise<UmbracoForm
   });
 
   return res.body;
+}
+
+export async function getCommerceVersion(): Promise<string> {
+  try {
+    const response = await fetch(`${umbracoBaseUrl}/umbraco/api/commerceversionapi/getversion`, {
+      method: 'GET',
+      cache: 'no-store'
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const version = await response.text();
+    return version.trim() || 'unknown';
+  } catch (error) {
+    console.error('Failed to fetch commerce version:', error);
+    return 'unknown';
+  }
 }

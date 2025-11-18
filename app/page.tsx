@@ -6,7 +6,7 @@ import FilterModal from 'components/product/filter-modal';
 import ProductGridTile from 'components/product/product-grid-tile';
 
 import { defaultSort, sorting } from 'lib/constants';
-import { getProductTags, getProducts } from 'lib/umbraco';
+import { getCommerceVersion, getProductTags, getProducts } from 'lib/umbraco';
 import { Product } from 'lib/umbraco/types';
 
 export const runtime = 'edge';
@@ -36,13 +36,21 @@ export default async function HomePage({
   });
   const productTags = await getProductTags();
 
+  // Get commerce version with fallback
+  let commerceVersion = 'unknown';
+  try {
+    commerceVersion = await getCommerceVersion();
+  } catch (error) {
+    console.error('Failed to get commerce version, using fallback:', error);
+  }
+
   return (
     <PageLayout
       asideStyle={'NARROW'}
       aside={
         <Headline
           title="Umbraco Headless Demo"
-          description="With this demo store you are sure to loose your head over all the umbmazing headless features we have on offer 😉"
+          description={`With this demo store you are sure to loose your head over all the umbmazing headless features we have on offer 😉. This demo is using Umbraco Commerce ${commerceVersion}`}
         />
       }
     >
