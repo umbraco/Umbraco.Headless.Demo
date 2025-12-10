@@ -1,4 +1,3 @@
-
 import {
   Cart,
   CartItem,
@@ -8,10 +7,12 @@ import {
   Money,
   Page,
   PaymentMethod,
+  PaymentMethodWithFee,
   Product,
   ProductOption,
   ProductVariant,
   ShippingMethod,
+  ShippingMethodWithRates,
   UmbracoCommerceAmount,
   UmbracoCommerceCheckoutConfirmResponse,
   UmbracoCommerceCheckoutToken,
@@ -22,8 +23,10 @@ import {
   UmbracoCommerceOrderLine,
   UmbracoCommerceOrderUpdate,
   UmbracoCommercePaymentMethod,
+  UmbracoCommercePaymentMethodWithFee,
   UmbracoCommercePrice,
   UmbracoCommerceShippingMethod,
+  UmbracoCommerceShippingMethodWithRates,
   UmbracoCommerceVariantPropertyValue,
   UmbracoFormsResponse,
   UmbracoLink,
@@ -109,10 +112,10 @@ export async function umbracoFetch<T>(opts: {
     // console.log(url);
     // console.log(options.body);
 
-    // const txt = await result.text();
-    // console.log(url)
-    // console.log(txt)
-    // const body = JSON.parse(txt)
+    //const txt = await result.text();
+    //console.log(url)
+    //console.log(txt)
+    //const body = JSON.parse(txt)
 
     const body = await result.json();
 
@@ -261,6 +264,7 @@ const reshapeOrder = (order: UmbracoCommerceOrder): Cart => {
     shippingMethod: order?.shippingInfo?.shippingMethod
       ? reshapeShippingMethod(order.shippingInfo.shippingMethod)
       : undefined,
+    shippingOption: order?.shippingInfo?.shippingOption,
     isComplete: order?.isFinalized || false
   };
 };
@@ -342,20 +346,20 @@ const reshapeProduct = (
     return undefined;
   }
 
-  let nodeAlias = node.route.path
+  const nodeAlias = node.route.path
     .replace(/^\/+|\/+$/g, '')
     .split('/')
     .pop();
-  let nodeHandle = nodeAlias || node.id;
+  const nodeHandle = nodeAlias || node.id;
 
   let currency = 'EUR';
   let minPrice = 0;
   let maxPrice = 0;
 
-  let metaTitle = node.properties['metaTitle']?.toString() || node.name;
-  let metaDescription = node.properties['metaDescription']?.toString();
+  const metaTitle = node.properties['metaTitle']?.toString() || node.name;
+  const metaDescription = node.properties['metaDescription']?.toString();
 
-  let product = <Product>{
+  const product = <Product>{
     id: node.id,
     handle: nodeHandle,
     title: node.name,
@@ -392,7 +396,7 @@ const reshapeProduct = (
     ];
   }
 
-  let variants = node.properties['variants'] as UmbracoCommerceVariantPropertyValue;
+  const variants = node.properties['variants'] as UmbracoCommerceVariantPropertyValue;
   if (variants) {
     product.options = variants.attributes.map((attr) => ({
       alias: attr.alias,
@@ -400,7 +404,7 @@ const reshapeProduct = (
       values: attr.values.map((v) => ({ alias: v.alias, name: v.name }))
     }));
 
-    let productVariants = <ProductVariant[]>[];
+    const productVariants = <ProductVariant[]>[];
 
     variants.items.forEach((itm) => {
       if (itm.content) {
@@ -437,7 +441,7 @@ const reshapeProduct = (
     }
   }
 
-  let media = (node.properties['images'] || node.properties['image']) as UmbracoMedia[];
+  const media = (node.properties['images'] || node.properties['image']) as UmbracoMedia[];
   if (media.length > 0) {
     var images = media.map((m) => reshapeImage(m));
     product.featuredImage = images[0]!;
@@ -457,17 +461,17 @@ const reshapeProducts = (nodes: UmbracoNode[]): Product[] => {
 };
 
 const reshapePage = (node: UmbracoNode): Page => {
-  let nodeAlias = node.route.path
+  const nodeAlias = node.route.path
     .replace(/^\/+|\/+$/g, '')
     .split('/')
     .pop();
-  let nodeHandle = nodeAlias || node.id;
+  const nodeHandle = nodeAlias || node.id;
 
-  let metaTitle = node.properties['metaTitle']?.toString() || node.name;
-  let metaDescription = node.properties['metaDescription']?.toString();
+  const metaTitle = node.properties['metaTitle']?.toString() || node.name;
+  const metaDescription = node.properties['metaDescription']?.toString();
 
-  let sidebarTitle = node.properties['sidebarTitle']?.toString() || node.name;
-  let sidebarDescription =
+  const sidebarTitle = node.properties['sidebarTitle']?.toString() || node.name;
+  const sidebarDescription =
     node.properties['sidebarDescription']?.toString() || node.properties['summary']?.toString();
 
   return {
@@ -518,13 +522,37 @@ const reshapeShippingMethod = (
   return {
     id: entity.id,
     alias: entity.alias,
-    name: entity.name,
-    price: entity.price ? reshapePrice(entity.price) : undefined
+    name: entity.name
   };
 };
 
 const reshapeShippingMethods = (entities: UmbracoCommerceShippingMethod[]): ShippingMethod[] => {
   return <ShippingMethod[]>(entities || []).map((e) => reshapeShippingMethod(e)).filter((e) => !!e);
+};
+
+const reshapeShippingMethodWithRates = (
+  entity: UmbracoCommerceShippingMethodWithRates
+): ShippingMethodWithRates | undefined => {
+  if (!entity) {
+    return undefined;
+  }
+  return {
+    id: entity.id,
+    alias: entity.alias,
+    name: entity.name,
+    rates: entity.rates?.map((r) => ({
+      option: r.option,
+      value: r.value ? reshapePrice(r.value) : undefined
+    }))
+  };
+};
+
+const reshapeShippingMethodsWithRates = (
+  entities: UmbracoCommerceShippingMethodWithRates[]
+): ShippingMethodWithRates[] => {
+  return <ShippingMethodWithRates[]>(
+    (entities || []).map((e) => reshapeShippingMethodWithRates(e)).filter((e) => !!e)
+  );
 };
 
 const reshapePaymentMethod = (entity: UmbracoCommercePaymentMethod): PaymentMethod | undefined => {
@@ -535,13 +563,35 @@ const reshapePaymentMethod = (entity: UmbracoCommercePaymentMethod): PaymentMeth
     id: entity.id,
     alias: entity.alias,
     name: entity.name,
-    paymentProviderAlias: entity.paymentProviderAlias,
-    price: entity.price ? reshapePrice(entity.price) : undefined
+    paymentProviderAlias: entity.paymentProviderAlias
   };
 };
 
 const reshapePaymentMethods = (entities: UmbracoCommercePaymentMethod[]): PaymentMethod[] => {
   return <PaymentMethod[]>(entities || []).map((e) => reshapePaymentMethod(e)).filter((e) => !!e);
+};
+
+const reshapePaymentMethodWithFee = (
+  entity: UmbracoCommercePaymentMethodWithFee
+): PaymentMethodWithFee | undefined => {
+  if (!entity) {
+    return undefined;
+  }
+  return {
+    id: entity.id,
+    alias: entity.alias,
+    name: entity.name,
+    paymentProviderAlias: entity.paymentProviderAlias,
+    fee: entity.fee ? reshapePrice(entity.fee) : undefined
+  };
+};
+
+const reshapePaymentMethodsWithFee = (
+  entities: UmbracoCommercePaymentMethodWithFee[]
+): PaymentMethodWithFee[] => {
+  return <PaymentMethodWithFee[]>(
+    (entities || []).map((e) => reshapePaymentMethodWithFee(e)).filter((e) => !!e)
+  );
 };
 
 export async function createCart(): Promise<Cart> {
@@ -669,7 +719,7 @@ export async function getMenu(handle: string): Promise<Menu[]> {
     tags: [VALIDATION_TAGS.collections, VALIDATION_TAGS.products, VALIDATION_TAGS.pages]
   });
 
-  let menu = res.body?.properties[`${handle}Menu`] as UmbracoLink[];
+  const menu = res.body?.properties[`${handle}Menu`] as UmbracoLink[];
 
   return (
     menu?.map((itm) => {
@@ -857,6 +907,21 @@ export async function getShippingMethods(countryCode: string): Promise<ShippingM
   return reshapeShippingMethods(res.body);
 }
 
+export async function calculateShippingMethodRates(
+  orderId: string
+): Promise<ShippingMethodWithRates[]> {
+  const res = await umbracoCommerceFetch<UmbracoCommerceShippingMethodWithRates[]>({
+    method: 'GET',
+    path: `/checkout/${orderId}/shippingmethods`
+  });
+
+  if (!res.body) {
+    return [];
+  }
+
+  return reshapeShippingMethodsWithRates(res.body);
+}
+
 export async function getPaymentMethods(countryCode: string): Promise<PaymentMethod[]> {
   const res = await umbracoCommerceFetch<UmbracoCommercePaymentMethod[]>({
     method: 'GET',
@@ -868,6 +933,23 @@ export async function getPaymentMethods(countryCode: string): Promise<PaymentMet
   }
 
   return reshapePaymentMethods(
+    res.body.filter((item) => {
+      return item.alias !== 'zeroValue';
+    })
+  );
+}
+
+export async function calculatePaymentMethodFees(orderId: string): Promise<PaymentMethodWithFee[]> {
+  const res = await umbracoCommerceFetch<UmbracoCommercePaymentMethodWithFee[]>({
+    method: 'GET',
+    path: `/checkout/${orderId}/paymentmethods`
+  });
+
+  if (!res.body) {
+    return [];
+  }
+
+  return reshapePaymentMethodsWithFee(
     res.body.filter((item) => {
       return item.alias !== 'zeroValue';
     })
@@ -920,8 +1002,7 @@ export async function submitStockNotificationForm(
   email: string,
   productReference: string
 ): Promise<UmbracoFormsResponse> {
-
-  const idParts = productReference.split(':')
+  const idParts = productReference.split(':');
 
   const res = await umbracoFormsFetch<UmbracoFormsResponse>({
     method: 'POST',
@@ -937,14 +1018,9 @@ export async function submitStockNotificationForm(
   });
 
   return res.body;
-
 }
 
-export async function submitForm(
-  formId: string,
-  data: any
-): Promise<UmbracoFormsResponse> {
-
+export async function submitForm(formId: string, data: any): Promise<UmbracoFormsResponse> {
   const res = await umbracoFormsFetch<UmbracoFormsResponse>({
     method: 'POST',
     path: `/entries/${formId}`,
@@ -955,5 +1031,23 @@ export async function submitForm(
   });
 
   return res.body;
+}
 
+export async function getCommerceVersion(): Promise<string> {
+  try {
+    const response = await fetch(`${umbracoBaseUrl}/umbraco/api/commerceversionapi/getversion`, {
+      method: 'GET',
+      cache: 'no-store'
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const version = await response.text();
+    return version.trim() || 'unknown';
+  } catch (error) {
+    console.error('Failed to fetch commerce version:', error);
+    return 'unknown';
+  }
 }

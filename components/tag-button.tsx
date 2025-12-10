@@ -28,7 +28,7 @@ export default function TagButton({
           'btn-md px-4': size === 'large',
           'bg-stb-5 text-black hover:bg-stb-15': !selected && !disabled,
           'cursor-default bg-umb-green text-white': selected && !disabled,
-          'bg-stb-15 text-gray-400 line-through': !selected && disabled,
+          'bg-stb-15 text-gray-700 line-through': !selected && disabled,
           'bg-stb-40 text-white line-through': selected && disabled,
           'cursor-not-allowed': disabled && !allowDisabledClick
         },

@@ -146,7 +146,7 @@ function UmbTextInputField({
 }: {
   field: UmbracoFormField
 } & React.ComponentProps<'input'>) {
-  return <input type={field.settings.fieldType || 'text'} 
+  return <input type={field.settings['FieldType'] || 'text'} 
     id={'el-' + field.id}
     name={field.alias} 
     placeholder={field.settings['Placeholder']} 

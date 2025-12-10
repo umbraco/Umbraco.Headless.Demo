@@ -1,0 +1,47 @@
+trigger:
+  batch: true
+  branches:
+    include:
+      - frontend/main
+      - frontend/dev
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  # Reference variable group containing secrets and configuration
+  - group: 'headless-demo-frontend-fork'
+
+steps:
+  - task: Bash@3
+    displayName: 'Trigger fork repository synchronization'
+    inputs:
+      targetType: inline
+      script: |
+        branchName="frontend/$(Build.SourceBranchName)"
+        echo "Triggering fork synchronization for branch: $branchName"
+        echo "Environment variables:"
+        echo "FORK_ACCESS_TOKEN: ${FORK_ACCESS_TOKEN:0:6}...${FORK_ACCESS_TOKEN: -6}"
+        echo "FORK_REPOSITORY_URL: $FORK_REPOSITORY_URL"
+
+        response=$(curl -s -w "HTTPSTATUS:%{http_code}" -X POST \
+          -H "Accept: application/vnd.github+json" \
+          -H "Authorization: Bearer $FORK_ACCESS_TOKEN" \
+          $FORK_REPOSITORY_URL/dispatches \
+          -d "{\"event_type\":\"sync-request\", \"client_payload\": {\"branch\": \"$branchName\"}}")
+
+        http_code=$(echo $response | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
+        body=$(echo $response | sed -e 's/HTTPSTATUS\:.*//g')
+
+        echo "Response HTTP code: $http_code"
+        echo "Response body: $body"
+
+        if [ "$http_code" -eq 204 ]; then
+          echo "✅ Successfully triggered fork synchronization"
+        else
+          echo "❌ Failed to trigger fork synchronization (HTTP $http_code)"
+          exit 1
+        fi
+    env:
+      FORK_ACCESS_TOKEN: $(FORK_ACCESS_TOKEN)
+      FORK_REPOSITORY_URL: $(FORK_REPOSITORY_URL)

@@ -42,7 +42,7 @@ export function AddToCartButton({
         'btn btn-lg outline-umb-blue',
         {
           'bg-umb-blue text-white hover:bg-umb-green': variant?.availableForSale,
-          'cursor-not-allowed bg-stb-15 text-gray-400 line-through':
+          'cursor-not-allowed bg-stb-15 text-gray-700 line-through':
             !variant?.availableForSale,
           'cursor-not-allowed': isPending
         },
