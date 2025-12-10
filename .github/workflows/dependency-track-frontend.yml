@@ -1,0 +1,57 @@
+name: Build and Upload SBOMs to Dependency-Track (Frontend)
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - 'frontend/main'
+
+jobs:
+  sbom:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Node.js SBOM
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.x'
+
+      - name: Install CycloneDX Node.js CLI
+        run: npm install --save-dev @cyclonedx/cyclonedx-npm
+
+      - name: Generate SBOM for Node.js
+        run: |
+          mkdir -p ./sbom
+          npx @cyclonedx/cyclonedx-npm -o ./sbom/bom-frontend.xml
+
+
+      # Extract major version from package.json
+      - name: Extract major version
+        id: extract-version
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          MAJOR_VERSION=$(echo "$VERSION" | grep -oP '^\d+')
+          echo "version=$VERSION"
+          echo "major_version=$MAJOR_VERSION"
+          echo "major_version=$MAJOR_VERSION" >> $GITHUB_OUTPUT
+
+      # Upload Node.js SBOM
+      - name: Upload Node.js SBOM to Dependency-Track
+        env:
+          DTRACK_URL: ${{ secrets.DTRACK_URL }}
+          DTRACK_API_KEY: ${{ secrets.DTRACK_API_KEY }}
+        run: |
+          curl --fail-with-body -v -i -w "\nHTTP Status: %{http_code}\n" \
+            -X POST "$DTRACK_URL" \
+            -H "X-Api-Key: $DTRACK_API_KEY" \
+            -H "accept: application/json" \
+            -H "Content-Type: multipart/form-data" \
+            -F "autoCreate=true" \
+            -F "projectName=${{ github.event.repository.name }}-frontend" \
+            -F "projectVersion=${{ steps.extract-version.outputs.major_version }}" \
+            -F "parentProjectName=${{ github.event.repository.name }}" \
+            -F "parentProjectVersion=${{ steps.extract-version.outputs.major_version }}" \
+            -F "bom=@./sbom/bom-frontend.xml"
