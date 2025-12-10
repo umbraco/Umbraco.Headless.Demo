@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - 'backend/main'
+      - 'backend/*'
 
 jobs:
   sbom:
