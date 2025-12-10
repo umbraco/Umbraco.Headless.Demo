@@ -43,13 +43,13 @@ jobs:
           dotnet-CycloneDX "$TARGET_FILE" --output ./sbom --filename bom-dotnet.xml --output-format Xml --enable-github-licenses --github-bearer-token ${{ secrets.GITHUB_TOKEN }}
 
       # Extract major version from Umbraco.Commerce dependency
-      - name: Extract Umbraco.Commerce major version
+      - name: Extract Umbraco.Cms major version
         id: extract-version
         run: |
           PROJECT_FILE="src/Umbraco.Headless.Demo.Web/Umbraco.Headless.Demo.Web.csproj"
-          COMMERCE_VERSION=$(grep -oP 'PackageReference Include="Umbraco.Commerce" Version="\K[^"]+' "$PROJECT_FILE")
-          MAJOR_VERSION=$(echo "$COMMERCE_VERSION" | grep -oP '^\d+')
-          echo "commerce_version=$COMMERCE_VERSION"
+          CMS_VERSION=$(grep -oP 'PackageReference Include="Umbraco.Cms" Version="\K[^"]+' "$PROJECT_FILE")
+          MAJOR_VERSION=$(echo "$CMS_VERSION" | grep -oP '^\d+')
+          echo "CMS_version=$CMS_VERSION"
           echo "major_version=$MAJOR_VERSION"
           echo "major_version=$MAJOR_VERSION" >> $GITHUB_OUTPUT
 
