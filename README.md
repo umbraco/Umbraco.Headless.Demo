@@ -10,7 +10,7 @@ This branch represents the backend of the [Umbraco Headless Demo](https://github
 - Dynamic Menu system
 - Content manageable pages
 
-Demo site: https://admin.headless-demo.umbraco.com/
+Demo site: https://admin.headless-demo.umbraco.com/ 
 
 ## System Requirements
 
