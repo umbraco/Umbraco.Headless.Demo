@@ -1,10 +1,11 @@
 parameters:
-  umbraco_project_name:
-  environment: # dev/live
-  environment_name:
-  bounded_context:
-  service_name:
-  service_connection_name:
+  - name: umbraco_project_name
+  - name: environment # dev/live
+  - name: environment_name
+  - name: bounded_context
+    default: "demos"
+  - name: service_name
+  - name: service_connection_name
 
 jobs:
   - deployment: deploy_application
@@ -13,7 +14,10 @@ jobs:
     dependsOn:
       - provisioning_infrastructure
     variables:
-      adminWebsiteWebAppName: 'azapp-${{ parameters.environment }}-${{ parameters.bounded_context }}-${{ parameters.service_name }}-umbraco'
+      - group: "${{ parameters.bounded_context }}-global-${{ parameters.environment }}"
+      - group: "headless-demo-${{ parameters.environment }}"
+      - name: adminWebsiteWebAppName
+        value: 'azapp-${{ parameters.environment }}-${{ parameters.bounded_context }}-${{ parameters.service_name }}-umbraco'
 
     strategy:
       runOnce:
@@ -68,6 +72,21 @@ jobs:
                       "slotSetting": false
                     }
                   ]
+                connectionStrings: |
+                  [
+                    {
+                      "name": "umbracoDbDSN",
+                      "value": "$(HEADLESS_SECRET_CONNECTION_STRINGS)",
+                      "type": "SQLServer",
+                      "slotSetting": false
+                    },
+                    {
+                      "name": "umbracoDbDSN_ProviderName",
+                      "value": "Microsoft.Data.SqlClient",
+                      "type": "SQLServer",
+                      "slotSetting": false
+                    }
+                  ]
 
             - task: AzureAppServiceSettings@1
               displayName: 'Set Umbraco Web App Settings (Live)'
@@ -100,6 +119,21 @@ jobs:
                     {
                       "name": "Site__DisableEdits",
                       "value": true,
+                      "slotSetting": false
+                    }
+                  ]
+                connectionStrings: |
+                  [
+                    {
+                      "name": "umbracoDbDSN",
+                      "value": "$(HEADLESS_SECRET_CONNECTION_STRINGS)",
+                      "type": "SQLServer",
+                      "slotSetting": false
+                    },
+                    {
+                      "name": "umbracoDbDSN_ProviderName",
+                      "value": "Microsoft.Data.SqlClient",
+                      "type": "SQLServer",
                       "slotSetting": false
                     }
                   ]

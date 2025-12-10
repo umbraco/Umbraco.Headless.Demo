@@ -33,7 +33,7 @@ namespace Umbraco.Headless.Demo.EventHandlers
                                 if (image != null)
                                 {
                                     order.WithOrderLine(orderLine.Id)
-                                        .SetProperty("imageUrl", image.Url(urlProvider));
+                                        .SetPropertyAsync("imageUrl", image.Url(urlProvider));
                                 }
                             }
 
@@ -43,7 +43,7 @@ namespace Umbraco.Headless.Demo.EventHandlers
                                 if (bgColor != null)
                                 {
                                     order.WithOrderLine(orderLine.Id)
-                                        .SetProperty("bgColor", bgColor);
+                                        .SetPropertyAsync("bgColor", bgColor);
                                 }
                             }
                         }

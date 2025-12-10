@@ -14,6 +14,13 @@ stages:
         displayName: Build
         steps:
 
+          - task: UseDotNet@2
+            displayName: 'Use .NET 10 SDK'
+            inputs:
+              packageType: 'sdk'
+              version: '10.x'
+              installationPath: $(Agent.ToolsDirectory)/dotnet
+
           - task: DotNetCoreCLI@2
             displayName: 'Build Solution'
             inputs:

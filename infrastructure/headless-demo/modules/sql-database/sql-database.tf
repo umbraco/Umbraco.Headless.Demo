@@ -89,4 +89,5 @@ resource "azurerm_sql_database" "db" {
   server_name         = azurerm_sql_server.server.name
   edition             = var.sql_edition
   tags                = var.azure_tags
+  max_size_bytes      = 1073741824
 }

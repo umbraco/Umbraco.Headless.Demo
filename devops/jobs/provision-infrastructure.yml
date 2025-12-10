@@ -1,18 +1,22 @@
 parameters:
-  environment: # dev/live
-  environment_name:
-  working_directory:
-  tf_version:
-  service_variable_group:
-  service_connection_name:
+  - name: environment # dev/live
+  - name: environment_name
+  - name: working_directory
+  - name: tf_version
+  - name: service_variable_group
+  - name: service_connection_name
+  - name: paramDependsOn
+    default: ''
 
 jobs:
   - deployment: provisioning_infrastructure
     displayName: Provision infrastructure - ${{ parameters.environment }}
     environment: ${{ parameters.environment_name }}
+    dependsOn: ${{ parameters.paramDependsOn }}
     continueOnError: false
     variables:
       - group: ${{ parameters.service_variable_group }}
+      - group: "headless-demo-${{ parameters.environment }}"
       - name: environment
         value: ${{ parameters.environment }}
 

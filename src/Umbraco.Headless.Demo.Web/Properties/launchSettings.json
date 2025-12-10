@@ -19,8 +19,8 @@
     "Umbraco.Web.UI": {
       "commandName": "Project",
       "dotnetRunMessages": true,
-      "launchBrowser": true,
-      "applicationUrl": "https://localhost:44381;http://localhost:38817",
+      "launchBrowser": false,
+      "applicationUrl": "https://*:44381;http://*:38817",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }      

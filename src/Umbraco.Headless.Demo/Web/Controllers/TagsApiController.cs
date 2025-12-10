@@ -1,9 +1,11 @@
 ﻿using Umbraco.Cms.Core.Services;
-using Umbraco.Cms.Web.Common.Controllers;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Umbraco.Headless.Demo.Web.Controllers
 {
-    public class TagsApiController : UmbracoApiController
+    [ApiController]
+    [Route("umbraco/api/[controller]/[action]")]
+    public class TagsApiController : ControllerBase
     {
         private readonly ITagService _tagService;
 
@@ -12,6 +14,7 @@ namespace Umbraco.Headless.Demo.Web.Controllers
             _tagService = tagService;
         }
 
+        [HttpGet]
         public string[] GetTags(string group)
         {
             return _tagService.GetAllTags(group).Where(x => x.NodeCount > 0).Select(x => x.Text).ToArray();

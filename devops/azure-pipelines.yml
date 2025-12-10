@@ -22,13 +22,6 @@ pr:
       - backend/hotfix/*
       - backend/support/*
 
-schedules:
-- cron: '0 0 * * *'
-  displayName: Daily midnight build
-  branches:
-    include:
-    - backend/main
-
 pool:
   vmImage: 'windows-latest'
 
